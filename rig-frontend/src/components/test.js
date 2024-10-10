@@ -1,10 +1,32 @@
-import React from 'react';
+import React ,{useEffect} from 'react';
 import { Container,Typography,Button,Table,TableBody,TableCell,TableContainer,TableHead, TableRow,Paper,Select,MenuItem,
   FormControl,InputLabel,IconButton,Tooltip} from '@mui/material';
 import { Add, ArrowForward, Event, ErrorOutline } from '@mui/icons-material'; 
-
+import {useDispatch,useSelector} from 'react-redux'
+import { fetchMaterialRequestData } from '../redux/actions/materialRequestsAction';
 function MaterialRequestTable() {
-  // Example data for table rows
+  const dispatch = useDispatch()
+  const materialRequests = useSelector((state) => state.materialRequestReducer.materialRequests)
+
+  useEffect(() =>{
+    dispatch(fetchMaterialRequestData())
+  },[dispatch])
+
+  const createData = (requestDate,requestName,requiredBy,supplier,vessel,remarks,status) => {
+      return {requestDate,requestName,requiredBy,supplier,vessel,remarks,status}   
+  }
+
+  const records = materialRequests.map((materialRequest) => createData(
+   '12/12/2024',
+   materialRequest.materialRequestName,
+   materialRequest.materialRequestRequiredBy,
+   materialRequest.materialRequestSupplier.supplierName,
+   materialRequest.materialRequestVessel.vesselName,
+   materialRequest.materialRequestRemarks,
+   materialRequest.materialRequestStatus,
+
+
+  ))
   const rows = [
     {
       requestDate: '12/12/2024',
@@ -87,14 +109,14 @@ function MaterialRequestTable() {
               <TableCell style={{ fontWeight: 'bold' }}>Request Name</TableCell>
               <TableCell style={{ fontWeight: 'bold' }}>Required By</TableCell>
               <TableCell style={{ fontWeight: 'bold' }}>Supplier</TableCell>
-              <TableCell style={{ fontWeight: 'bold' }}>Rig Name/ID</TableCell>
+              <TableCell style={{ fontWeight: 'bold' }}>VesselName</TableCell>
               <TableCell style={{ fontWeight: 'bold' }}>Remarks</TableCell>
               <TableCell style={{ fontWeight: 'bold' }}>Current Status</TableCell>
               <TableCell style={{ fontWeight: 'bold' }}>Action</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
-            {rows.map((row, index) => (
+            {records.map((row, index) => (
               <TableRow key={index} hover style={index % 2 === 0 ? { backgroundColor: '#fafafa' } : {}}>
                 <TableCell>
                   <Typography style={{ display: 'flex', alignItems: 'center' }}>
@@ -110,12 +132,12 @@ function MaterialRequestTable() {
                 </TableCell>
                 <TableCell>{row.requiredBy}</TableCell>
                 <TableCell>{row.supplier}</TableCell>
-                <TableCell>{row.rigNameId}</TableCell>
+                <TableCell>{row.vessel}</TableCell>
                 <TableCell>{row.remarks}</TableCell>
                 <TableCell>
                   <Typography color="error" style={{ display: 'flex', alignItems: 'center' }}>
                     <ErrorOutline fontSize="small" style={{ marginRight: '8px' }} />
-                    {row.currentStatus}
+                    {row.status}
                   </Typography>
                 </TableCell>
                 <TableCell>
