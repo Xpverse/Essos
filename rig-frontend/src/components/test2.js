@@ -1,13 +1,25 @@
-import React from 'react';
+import React, { useEffect,useState } from 'react';
+
 import { Container, Typography, TextField, Button, MenuItem, Select, InputLabel, FormControl, Tabs, Tab, Paper, Box } from '@mui/material';
 import { CloudUpload, InsertDriveFile } from '@mui/icons-material';
+import { useDispatch, useSelector } from 'react-redux';
+import { fetchWellRequestData } from '../redux/actions/wellAction';
 
 function MaterialRequestForm() {
+  const dispatch = useDispatch();
   const [requestType, setRequestType] = React.useState(0);
-
+  
   const handleTabChange = (event, newValue) => {
     setRequestType(newValue);
   };
+ 
+  const wells = useSelector((state) => state.wellReducer.wells)
+
+  useEffect(() => {
+    
+    dispatch(fetchWellRequestData())
+  },[dispatch])
+
 
   return (
     <Container maxWidth="lg" style={{ padding: '40px 0' }}>
@@ -85,7 +97,11 @@ function MaterialRequestForm() {
               <InputLabel>Well</InputLabel>
               <Select label="Well" defaultValue="">
                 <MenuItem value="">Please Select Well</MenuItem>
-                <MenuItem value="Well 1">Well 1</MenuItem>
+                {wells && wells.map((well, index) => (
+                  <MenuItem key={index} value={well.wellName}>
+                    {well.wellName}
+                  </MenuItem>
+                ))}
                
               </Select>
             </FormControl>

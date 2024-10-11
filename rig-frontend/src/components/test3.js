@@ -1,8 +1,19 @@
-import React from 'react';
+import React,{useEffect} from 'react';
+import { useParams } from 'react-router-dom';
+import { useDispatch, useSelector } from 'react-redux';
 import { Container, Typography, Box, Grid, Button, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Checkbox } from '@mui/material';
 import { Send } from '@mui/icons-material';
+import { fetchCurrentMaterialRequestFinalAction } from '../redux/actions/materialRequestsAction';
 
 function MaterialRequestSummary() {
+  const { id } = useParams();
+  const dispatch = useDispatch();
+  useEffect(() => {
+    
+    dispatch(fetchCurrentMaterialRequestFinalAction(id))
+  },[dispatch,id])
+  const currentRequest = useSelector((state)=> state.materialRequestReducer.currentMaterialRequest)
+  const currentRequestItems =  useSelector((state)=> state.materialRequestReducer.currentMaterialRequestItems)
   const materialRequestData = {
     requestName: "Well-1 Drilling 36\"",
     phase: "Drilling 36\" hole",
@@ -49,26 +60,26 @@ function MaterialRequestSummary() {
           
           <Grid item xs={12} md={6}>
             <Typography variant="h6" sx={{ fontWeight: 600, color: '#00796B', marginBottom: 2 }}>
-              {materialRequestData.requestName}
+              {currentRequest && currentRequest.materialRequestName}
             </Typography>
 
             <Typography variant="body2" sx={{ color: 'gray' }}>Phase</Typography>
-            <Typography variant="body1" sx={{ marginBottom: 2 }}>{materialRequestData.phase}</Typography>
+            <Typography variant="body1" sx={{ marginBottom: 2 }}> {currentRequest && currentRequest.materialRequestPhase.phaseName  }</Typography>
 
             <Typography variant="body2" sx={{ color: 'gray' }}>Required by</Typography>
-            <Typography variant="body1" sx={{ marginBottom: 2 }}>{materialRequestData.requiredBy}</Typography>
+            <Typography variant="body1" sx={{ marginBottom: 2 }}> {currentRequest && currentRequest.materialRequestRequiredBy}</Typography>
 
             <Typography variant="body2" sx={{ color: 'gray' }}>Requested by</Typography>
-            <Typography variant="body1" sx={{ marginBottom: 2 }}>{materialRequestData.requestedBy}</Typography>
+            <Typography variant="body1" sx={{ marginBottom: 2 }}> {currentRequest && currentRequest.materialRequestRequestedByUser.userName}</Typography>
           </Grid>
 
           
           <Grid item xs={12} md={6}>
             <Typography variant="body2" sx={{ color: 'gray' }}>Well</Typography>
-            <Typography variant="body1" sx={{ marginBottom: 2 }}>{materialRequestData.well}</Typography>
+            <Typography variant="body1" sx={{ marginBottom: 2 }}> {currentRequest && currentRequest.materialRequestWell.wellName}</Typography>
 
             <Typography variant="body2" sx={{ color: 'gray' }}>Block</Typography>
-            <Typography variant="body1" sx={{ marginBottom: 2 }}>{materialRequestData.block}</Typography>
+            <Typography variant="body1" sx={{ marginBottom: 2 }}>{currentRequest && currentRequest.materialRequestWell.wellBlock}</Typography>
 
             <Typography variant="body2" sx={{ color: 'gray' }}>Coordinates</Typography>
             <Typography variant="body1" sx={{ marginBottom: 2 }}>{materialRequestData.coordinates}</Typography>
@@ -115,46 +126,25 @@ function MaterialRequestSummary() {
             </TableRow>
           </TableHead>
           <TableBody>
-            {itemDetails.map((item, index) => (
+            {currentRequestItems && currentRequestItems.map((item, index) => (
               <TableRow key={item.id} hover sx={{ transition: 'all 0.3s ease-in-out', '&:hover': { backgroundColor: '#e0f2f1' } }}>
                 <TableCell padding="checkbox">
                   <Checkbox />
                 </TableCell>
                 <TableCell>{index + 1}</TableCell>
                 <TableCell>{item.matCode}</TableCell>
-                <TableCell>{item.description}</TableCell>
-                <TableCell>{item.qty}</TableCell>
-                <TableCell>{item.uom}</TableCell>
+                <TableCell>{item.materialRequestItemDescription}</TableCell>
+                <TableCell>{item.materialRequestItemQuantity}</TableCell>
+                <TableCell>{item.materialRequestItemUom}</TableCell>
                 <TableCell>{item.psl}</TableCell>
                 <TableCell>{item.packingDetails}</TableCell>
-                <TableCell>{`${item.dimensions.L} x ${item.dimensions.W} x ${item.dimensions.H}`}</TableCell>
+                <TableCell>{`${item.materialRequestItemLength} x ${item.materialRequestItemWidth} x ${item.materialRequestItemHeight}`}</TableCell>
                 <TableCell>{item.weight}</TableCell>
               </TableRow>
             ))}
           </TableBody>
         </Table>
       </TableContainer>
-
-      
-      <Box display="flex" justifyContent="flex-end" sx={{ marginTop: 4 }}>
-        <Button
-          variant="contained"
-          startIcon={<Send />}
-          sx={{
-            borderRadius: '24px',
-            padding: '12px 28px',
-            backgroundColor: '#00796B',
-            fontSize: '16px',
-            textTransform: 'none',
-            '&:hover': {
-              backgroundColor: '#004d40',
-              transition: 'all 0.3s ease',
-            },
-          }}
-        >
-          Send Material Request
-        </Button>
-      </Box>
     </Container>
   );
 }
