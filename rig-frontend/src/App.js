@@ -16,7 +16,7 @@ function App() {
       <Route path ="/test" element={<MaterialRequestTable/>}/>
       <Route path = "/login" element={<LoginPage/>}/>
       <Route path ="/test2" element={<MaterialRequestForm/>}/>
-      <Route path ="/test3" element={<MaterialRequestSummary/>}/>
+      <Route path ="/test3/:id" element={<MaterialRequestSummary/>}/>
       <Route path ="/test4" element={<BeautifulTable/>}/>
     </Routes>
     </BrowserRouter>

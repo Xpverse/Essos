@@ -4,19 +4,29 @@ import { Container,Typography,Button,Table,TableBody,TableCell,TableContainer,Ta
 import { Add, ArrowForward, Event, ErrorOutline } from '@mui/icons-material'; 
 import {useDispatch,useSelector} from 'react-redux'
 import { fetchMaterialRequestData } from '../redux/actions/materialRequestsAction';
+import { useNavigate } from 'react-router-dom';
 function MaterialRequestTable() {
   const dispatch = useDispatch()
+  const navigate = useNavigate();
   const materialRequests = useSelector((state) => state.materialRequestReducer.materialRequests)
 
   useEffect(() =>{
     dispatch(fetchMaterialRequestData())
   },[dispatch])
 
-  const createData = (requestDate,requestName,requiredBy,supplier,vessel,remarks,status) => {
-      return {requestDate,requestName,requiredBy,supplier,vessel,remarks,status}   
+
+  const handleNavigation = (id) => {
+   
+    navigate(`/test3/${id}`); 
+  };
+
+
+  const createData = (requestId,requestDate,requestName,requiredBy,supplier,vessel,remarks,status) => {
+      return {requestId ,requestDate,requestName,requiredBy,supplier,vessel,remarks,status}   
   }
 
   const records = materialRequests.map((materialRequest) => createData(
+    materialRequest.materialRequestId,
    '12/12/2024',
    materialRequest.materialRequestName,
    materialRequest.materialRequestRequiredBy,
@@ -124,7 +134,7 @@ function MaterialRequestTable() {
                     {row.requestDate}
                   </Typography>
                 </TableCell>
-                <TableCell>
+                <TableCell onClick={() => handleNavigation(row.requestId)}>
                   <Typography style={{ display: 'flex', alignItems: 'center', color: '#009688' }}>
                     {row.requestName}
                     <ArrowForward fontSize="small" style={{ marginLeft: '8px' }} />
