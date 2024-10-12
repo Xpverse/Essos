@@ -8,7 +8,7 @@ import { fetchWellRequestData } from '../redux/actions/wellAction';
 function MaterialRequestForm() {
   const dispatch = useDispatch();
   const [requestType, setRequestType] = React.useState(0);
-  
+  const [selectedFile, setSelectedFile] = useState(null);
   const handleTabChange = (event, newValue) => {
     setRequestType(newValue);
   };
@@ -20,7 +20,14 @@ function MaterialRequestForm() {
     dispatch(fetchWellRequestData())
   },[dispatch])
 
-
+  const handleFileChange = (event) => {
+    const file = event.target.files[0];
+    if (file) {
+      setSelectedFile(file); 
+      console.log('Selected file:', file);
+    }
+    console.log('Checkpoint 2');
+  };
   return (
     <Container maxWidth="lg" style={{ padding: '40px 0' }}>
       
@@ -151,6 +158,14 @@ function MaterialRequestForm() {
 
           
           <Box textAlign="center" marginTop="32px">
+          <div>
+          <label>
+            <input
+              type="file"
+              accept=".csv"
+              onChange={handleFileChange}
+              style={{ display: 'none' }} // Hide the file input
+            />
             <Button
               variant="outlined"
               color="primary"
@@ -161,9 +176,15 @@ function MaterialRequestForm() {
                 color: '#00796B',
                 borderColor: '#00796B',
               }}
+              component="span"  
             >
-              Upload Excel File
+              {selectedFile ? 'Upload Another File' : 'Upload CSV File'}
             </Button>
+            </label>
+            {selectedFile && (
+            <p style={{ marginTop: '10px' }}>Selected file: {selectedFile.name}</p>
+            )}
+            </div>
             <Typography variant="body2" style={{ marginTop: '14px', color: '#00796B', cursor: 'pointer' }}>
               Download Template
             </Typography>
