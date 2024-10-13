@@ -11,10 +11,24 @@ function MaterialRequestForm() {
   const [requestType, setRequestType] = React.useState(0);
   const [selectedFile, setSelectedFile] = useState(null);
   const supplier = useSelector((state) => state.supplierReducer.suppliers || [])
+  const [formValues, setFormValues] = useState({
+    materialRequestWell: '',
+    materialRequestBlock: '',
+    coordinates: ''
+  });
+
+  const handleInputChange = (event) => {
+    const { name, value } = event.target;
+    setFormValues({
+      ...formValues,
+      [name]: value
+    });
+  };
+
   const handleTabChange = (event, newValue) => {
     setRequestType(newValue);
   };
- 
+  
   const wells = useSelector((state) => state.wellReducer.wells)
 
   useEffect(() => {
@@ -30,6 +44,12 @@ function MaterialRequestForm() {
       console.log('Selected file:', file);
     }
     console.log('Checkpoint 2');
+  };
+
+  const handleSubmit = (event) => {
+    event.preventDefault(); 
+   
+    console.log("Button clicked and form submitted!");
   };
   return (
     <Container maxWidth="lg" style={{ padding: '40px 0' }}>
@@ -105,7 +125,10 @@ function MaterialRequestForm() {
           <Box display="flex" gap="30px">
             <FormControl fullWidth variant="outlined" size="medium">
               <InputLabel>Well</InputLabel>
-              <Select label="Well" defaultValue="">
+              <Select label="Well" 
+              value={formValues.materialRequestWell} 
+              onChange={handleInputChange}
+              defaultValue="">
                 <MenuItem value="">Please Select Well</MenuItem>
                 {wells && wells.map((well, index) => (
                   <MenuItem key={index} value={well.wellName}>
@@ -200,6 +223,8 @@ function MaterialRequestForm() {
         <Button
           variant="contained"
           color="primary"
+          type="submit"
+        onClick={handleSubmit}
           style={{
             borderRadius: '24px',
             padding: '12px 28px',
