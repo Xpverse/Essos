@@ -151,9 +151,11 @@ function MaterialRequestForm() {
               label="Required By"
               variant="outlined"
               size="medium"
-              InputProps={{
-                endAdornment: <InsertDriveFile fontSize="small" style={{ color: '#00796B' }} />,
+              type='date'
+              InputLabelProps={{
+                shrink: true, 
               }}
+              
             />
 
             <TextField fullWidth label="Requested By" variant="outlined" size="medium" />
