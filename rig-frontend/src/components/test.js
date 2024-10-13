@@ -1,17 +1,24 @@
-import React ,{useEffect} from 'react';
+import React ,{useEffect, useState} from 'react';
 import { Container,Typography,Button,Table,TableBody,TableCell,TableContainer,TableHead, TableRow,Paper,Select,MenuItem,
   FormControl,InputLabel,IconButton,Tooltip} from '@mui/material';
 import { Add, ArrowForward, Event, ErrorOutline } from '@mui/icons-material'; 
 import {useDispatch,useSelector} from 'react-redux'
 import { fetchMaterialRequestData } from '../redux/actions/materialRequestsAction';
+import { fetchRigRequestData } from '../redux/actions/rigAction';
+import { fetchVesselRequestData } from '../redux/actions/vesselAction';
 import { useNavigate } from 'react-router-dom';
 function MaterialRequestTable() {
   const dispatch = useDispatch()
   const navigate = useNavigate();
   const materialRequests = useSelector((state) => state.materialRequestReducer.materialRequests)
+  const rigs = useSelector((state) => state.rigReducer.rigs || [])
+  const vessels = useSelector((state) => state.vesselReducer.vessels || [])
+  const [currentRig,setCurrentRig] = useState({})
 
   useEffect(() =>{
     dispatch(fetchMaterialRequestData())
+    dispatch(fetchRigRequestData())
+    dispatch(fetchVesselRequestData())
   },[dispatch])
 
 
@@ -20,7 +27,12 @@ function MaterialRequestTable() {
     navigate(`/test3/${id}`); 
   };
 
+  const handleRigChange = (event) => {
+    setCurrentRig(event.target.value);
+  };
 
+  // const filteredMaterialRequests = materialRequests.filter((request) =>
+  //    (request.materialRequestFromLocationType=="RIG" && request.materialRequestFromLocation))
   const createData = (requestId,requestDate,requestName,requiredBy,supplier,vessel,remarks,status) => {
       return {requestId ,requestDate,requestName,requiredBy,supplier,vessel,remarks,status}   
   }
@@ -93,10 +105,17 @@ function MaterialRequestTable() {
         
         <FormControl variant="outlined" size="small" style={{ minWidth: 200 }}>
           <InputLabel>Rig</InputLabel>
-          <Select label="Rig" defaultValue="All">
-            <MenuItem value="All">All</MenuItem>
-            <MenuItem value="Rig 1">Rig 1</MenuItem>
-           
+          <Select
+            label="Rig"
+            value={currentRig}
+            onChange={handleRigChange}
+          
+          >
+          {rigs && rigs.map((rig) => (
+              <MenuItem key={rig.rigId} value={rig.rigName}>
+              {rig.rigName}
+              </MenuItem>
+            ))}
           </Select>
         </FormControl>
 

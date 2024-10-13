@@ -4,11 +4,13 @@ import { Container, Typography, TextField, Button, MenuItem, Select, InputLabel,
 import { CloudUpload, InsertDriveFile } from '@mui/icons-material';
 import { useDispatch, useSelector } from 'react-redux';
 import { fetchWellRequestData } from '../redux/actions/wellAction';
+import { fetchSupplierRequestData } from '../redux/actions/supplierAction';
 
 function MaterialRequestForm() {
   const dispatch = useDispatch();
   const [requestType, setRequestType] = React.useState(0);
   const [selectedFile, setSelectedFile] = useState(null);
+  const supplier = useSelector((state) => state.supplierReducer.suppliers || [])
   const handleTabChange = (event, newValue) => {
     setRequestType(newValue);
   };
@@ -18,6 +20,7 @@ function MaterialRequestForm() {
   useEffect(() => {
     
     dispatch(fetchWellRequestData())
+    dispatch(fetchSupplierRequestData())
   },[dispatch])
 
   const handleFileChange = (event) => {
