@@ -11,10 +11,10 @@ import LoginPage from './components/test5';
 function AppLayout() {
   return (
     <div style={{ display: 'flex', flexDirection: 'column' }}>
-      <div style={{ height: '50px', width: '100%', backgroundColor: 'red' }}>heading</div>
+      <div style={{ height: '50px', width: '100%', backgroundColor: 'white', border:'2px solid black' }}>heading</div>
 
       <div style={{ display: 'flex', flexDirection: 'row' }}>
-        <div style={{ height: '700px', width: '50px', backgroundColor: 'yellow' }}>nav left</div>
+        <div style={{ height: '700px', width: '50px', backgroundColor: 'white', border:'2px solid black' }}>nav left</div>
         <div style={{ width: '100%' }}>
           <Routes>
             <Route path="/" element={<Homepage />} />
@@ -40,7 +40,6 @@ function App() {
 function Content() {
   const location = useLocation();
 
-  // Check if the current path is "/login"
   const isLoginRoute = location.pathname === '/login';
 
   return (
