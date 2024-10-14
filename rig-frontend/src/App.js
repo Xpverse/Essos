@@ -14,7 +14,7 @@ import {
 import { Home as HomeIcon, AccountTree as AccountTreeIcon, Settings as SettingsIcon } from '@mui/icons-material';
 
 
-const drawerWidth = 80;
+const drawerWidth = 50;
 
 function AppLayout() {
   const navigate = useNavigate();
@@ -50,9 +50,9 @@ function AppLayout() {
           <List>
             <ListItem button>
               <ListItemIcon>
-                <HomeIcon />
+                <HomeIcon  onClick={()=>navigate("/")}/>
               </ListItemIcon>
-              <ListItemText primary="" />
+              <ListItemText primary=""/>
             </ListItem>
             <ListItem button>
               <ListItemIcon>
