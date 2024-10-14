@@ -12,6 +12,7 @@ import {
   AppBar, Toolbar, Typography, Box, IconButton, Drawer, List, ListItem, ListItemIcon, ListItemText
 } from '@mui/material';
 import { Home as HomeIcon, AccountTree as AccountTreeIcon, Settings as SettingsIcon } from '@mui/icons-material';
+import MaterialRequest2 from './components/test6';
 
 
 const drawerWidth = 50;
@@ -52,19 +53,19 @@ function AppLayout() {
               <ListItemIcon>
                 <HomeIcon  onClick={()=>navigate("/")}/>
               </ListItemIcon>
-              <ListItemText primary=""/>
+              
             </ListItem>
             <ListItem button>
               <ListItemIcon>
-                <AccountTreeIcon />
+                <AccountTreeIcon onClick={()=>navigate("/test6")}/>
               </ListItemIcon>
-              <ListItemText primary="" />
+              
             </ListItem>
             <ListItem button>
               <ListItemIcon>
                 <SettingsIcon />
               </ListItemIcon>
-              <ListItemText primary="" />
+              
             </ListItem>
           </List>
         </Box>
@@ -78,6 +79,7 @@ function AppLayout() {
           <Route path="/test2" element={<MaterialRequestForm />} />
           <Route path="/test3/:id" element={<MaterialRequestSummary />} />
           <Route path="/test4" element={<BeautifulTable />} />
+          <Route path="/test6" element={<MaterialRequest2/>}/>
         </Routes>
       </Box>
     </div>
