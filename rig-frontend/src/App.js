@@ -8,26 +8,80 @@ import MaterialRequestForm from './components/test2';
 import MaterialRequestSummary from './components/test3';
 import BeautifulTable from './components/test4';
 import LoginPage from './components/test5';
+import {
+  AppBar, Toolbar, Typography, Box, IconButton, Drawer, List, ListItem, ListItemIcon, ListItemText
+} from '@mui/material';
+import { Home as HomeIcon, AccountTree as AccountTreeIcon, Settings as SettingsIcon } from '@mui/icons-material';
+
+
+const drawerWidth = 80;
+
 function AppLayout() {
   return (
-    <div style={{ display: 'flex', flexDirection: 'column' }}>
-      <div style={{ height: '50px', width: '100%', backgroundColor: 'white', border:'2px solid black' }}>heading</div>
+    <div style={{ display: 'flex' }}>
+      {/* Header */}
+      <AppBar position="fixed" sx={{ width: `calc(100% - ${drawerWidth}px)`, ml: `${drawerWidth}px`, backgroundColor: 'white', color: 'black' }}>
+        <Toolbar>
+          <Typography variant="h6" noWrap sx={{ flexGrow: 1 }}>
+            Home
+          </Typography>
+          <Typography variant="body1" noWrap>
+            Logged in as <strong>Base Coordinator</strong>
+          </Typography>
+        </Toolbar>
+      </AppBar>
 
-      <div style={{ display: 'flex', flexDirection: 'row' }}>
-        <div style={{ height: '700px', width: '50px', backgroundColor: 'white', border:'2px solid black' }}>nav left</div>
-        <div style={{ width: '100%' }}>
-          <Routes>
-            <Route path="/" element={<Homepage />} />
-            <Route path="/test" element={<MaterialRequestTable />} />
-            <Route path="/test2" element={<MaterialRequestForm />} />
-            <Route path="/test3/:id" element={<MaterialRequestSummary />} />
-            <Route path="/test4" element={<BeautifulTable />} />
-          </Routes>
-        </div>
-      </div>
+      {/* Left Sidebar */}
+      <Drawer
+        sx={{
+          width: drawerWidth,
+          flexShrink: 0,
+          '& .MuiDrawer-paper': {
+            width: drawerWidth,
+            boxSizing: 'border-box',
+          },
+        }}
+        variant="permanent"
+        anchor="left"
+      >
+        <Toolbar />
+        <Box sx={{ overflow: 'auto' }}>
+          <List>
+            <ListItem button>
+              <ListItemIcon>
+                <HomeIcon />
+              </ListItemIcon>
+              <ListItemText primary="" />
+            </ListItem>
+            <ListItem button>
+              <ListItemIcon>
+                <AccountTreeIcon />
+              </ListItemIcon>
+              <ListItemText primary="" />
+            </ListItem>
+            <ListItem button>
+              <ListItemIcon>
+                <SettingsIcon />
+              </ListItemIcon>
+              <ListItemText primary="" />
+            </ListItem>
+          </List>
+        </Box>
+      </Drawer>
+
+      {/* Main Content */}
+      <Box component="main" sx={{ flexGrow: 1, bgcolor: 'background.default', p: 3, ml: `${drawerWidth}px`, mt: '64px' }}>
+        <Routes>
+          <Route path="/" element={<Homepage />} />
+          <Route path="/test" element={<MaterialRequestTable />} />
+          <Route path="/test2" element={<MaterialRequestForm />} />
+          <Route path="/test3/:id" element={<MaterialRequestSummary />} />
+          <Route path="/test4" element={<BeautifulTable />} />
+        </Routes>
+      </Box>
     </div>
   );
-}
+};
 
 function App() {
   return (
