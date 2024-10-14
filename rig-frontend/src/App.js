@@ -9,7 +9,7 @@ import MaterialRequestSummary from './components/test3';
 import BeautifulTable from './components/test4';
 import LoginPage from './components/test5';
 import {
-  AppBar, Toolbar, Typography, Box, IconButton, Drawer, List, ListItem, ListItemIcon, ListItemText
+  AppBar, Toolbar, Typography, Box, IconButton, Button,Drawer, List, ListItem, ListItemIcon, ListItemText,
 } from '@mui/material';
 import { Home as HomeIcon, AccountTree as AccountTreeIcon, Settings as SettingsIcon } from '@mui/icons-material';
 import MaterialRequest2 from './components/test6';
@@ -28,7 +28,7 @@ function AppLayout() {
             Home
           </Typography>
           <Typography variant="body1" noWrap onClick={()=>navigate("/login")}>
-            Logged in as <strong>Base Coordinator</strong>
+           <Button><strong>log in</strong></Button>
           </Typography>
         </Toolbar>
       </AppBar>
