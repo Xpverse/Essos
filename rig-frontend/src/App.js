@@ -1,7 +1,7 @@
 import logo from './logo.svg';
 import './App.css';
 import Login from './components/login';
-import {BrowserRouter, Routes,Route, useLocation} from 'react-router-dom'
+import {BrowserRouter, Routes,Route, useLocation, useNavigate} from 'react-router-dom'
 import Homepage from './components/homepage';
 import MaterialRequestTable from './components/test';
 import MaterialRequestForm from './components/test2';
@@ -17,6 +17,7 @@ import { Home as HomeIcon, AccountTree as AccountTreeIcon, Settings as SettingsI
 const drawerWidth = 80;
 
 function AppLayout() {
+  const navigate = useNavigate();
   return (
     <div style={{ display: 'flex' }}>
       {/* Header */}
@@ -25,7 +26,7 @@ function AppLayout() {
           <Typography variant="h6" noWrap sx={{ flexGrow: 1 }}>
             Home
           </Typography>
-          <Typography variant="body1" noWrap>
+          <Typography variant="body1" noWrap onClick={()=>navigate("/login")}>
             Logged in as <strong>Base Coordinator</strong>
           </Typography>
         </Toolbar>
