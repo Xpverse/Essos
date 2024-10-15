@@ -21,13 +21,14 @@ export const fetchRigWellMapDataFailure = (error) => ({
     payload: error
 })
 
-export const fetchRIG_WELL_MAPRequestData = () =>  {
+export const fetchRigWellMapRequestData = () =>  {
     return (dispatch) => {
         dispatch(fetchRigWellMapDataRequest())
-        console.log("Checkpoint 1")
+        console.log("Checkpoint Rig Well Map")
         axios.get("http://localhost:8000/api/v1/rigwellmaps")
             .then(response => {
                 const data = response.data
+                console.log("******RIG WELL MAP DATA*****")
                 console.log(data)
                 dispatch(fetchRigWellMapDataSuccess(data))
             })

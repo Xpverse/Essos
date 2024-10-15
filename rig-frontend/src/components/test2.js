@@ -7,6 +7,7 @@ import { fetchWellRequestData } from '../redux/actions/wellAction';
 import { fetchSupplierRequestData } from '../redux/actions/supplierAction';
 import { postMaterialRequestFinalAction } from '../redux/actions/materialRequestsAction';
 import { useNavigate } from 'react-router-dom';
+import { fetchRigWellMapRequestData } from '../redux/actions/rigwellmapAction';
 
 function MaterialRequestForm() {
   const dispatch = useDispatch();
@@ -21,9 +22,9 @@ function MaterialRequestForm() {
     materialRequestBlock: '',
     materialRequestSupplier:{},
   });
-  
+
   const eligibleRigs = rigWellMaps.map(rigWellMap => 
-    rigWellMap.well === formValues["materialRequestWell"] ? rigWellMap.rig : null
+    rigWellMap.well.wellId === formValues["materialRequestWell"].wellId ? rigWellMap.rig : null
   ).filter(rig => rig !== null);
   
   const handleInputChange = (event) => {
@@ -58,6 +59,7 @@ function MaterialRequestForm() {
     
     dispatch(fetchWellRequestData())
     dispatch(fetchSupplierRequestData())
+    dispatch(fetchRigWellMapRequestData())
     
   },[dispatch])
 
@@ -195,7 +197,11 @@ function MaterialRequestForm() {
             <FormControl fullWidth variant="outlined" size="medium">
               <InputLabel>To</InputLabel>
               <Select label="To" defaultValue="">
-                <MenuItem value="">Place Holder</MenuItem>
+                {eligibleRigs && eligibleRigs.map((eligibleRig, index) => (
+                  <MenuItem key={index} value={eligibleRig.rigName}>
+                    {eligibleRig.rigName}
+                  </MenuItem>
+                ))}
                 
               </Select>
             </FormControl>
