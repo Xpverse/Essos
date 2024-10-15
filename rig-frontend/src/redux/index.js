@@ -16,7 +16,8 @@ const store = configureStore({
     wellReducer: wellReducer,
     rigReducer: rigReducer,
     vesselReducer: vesselReducer,
-    supplierReducer:supplierReducer
+    supplierReducer:supplierReducer,
+   
   },
   middleware: () => new Tuple(logger,thunk),
 });

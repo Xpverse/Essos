@@ -1,4 +1,5 @@
 import axios from "axios"
+import Papa from 'papaparse';
 export const FETCH_DATA_REQUEST_MATERIALREQUEST = "FETCH_DATA_REQUEST_MATERIALREQUEST"
 
 export const FETCH_DATA_SUCCESS_MATERIALREQUEST = "FETCH_DATA_SUCCESS_MATERIALREQUEST"
@@ -145,6 +146,7 @@ export const fetchCurrentMaterialRequestItemsFinalAction = (id) => {
                 const data = response.data
                 console.log(data)
                 dispatch(fetchCurrentMaterialRequestItemsSuccess(data))
+                
 
             })
             .catch(error => {
@@ -157,13 +159,13 @@ export const fetchCurrentMaterialRequestItemsFinalAction = (id) => {
 
 
 
-export const bulkUploadMaterialRequestItemsFinalAction = (file) => {
+export const bulkUploadMaterialRequestItemsFinalAction = (file,materialRequestId) => {
     return (dispatch) => {
         dispatch(bulkUploadMaterialRequestItems())
         const formData = new FormData();
         formData.append('file', file);
 
-        axios.post(`http://localhost:8000/api/v1/material-request-items/upload`,formData,{
+        axios.post(`http://localhost:8000/api/v1/material-request-items/upload?materialRequestId=${materialRequestId}`,formData,{
             headers: {
                 'Content-Type': 'multipart/form-data',
               }
@@ -186,12 +188,32 @@ export const bulkUploadMaterialRequestItemsFinalAction = (file) => {
 export const postMaterialRequestFinalAction = (materialRequest,file) => {
     return (dispatch) => {
         dispatch(postMaterialRequest())
-
-        axios.post(`http://localhost:8000/api/v1/material-request`,materialRequest)
+        const createBody = {
+            materialRequestSupplierId:materialRequest.materialRequestSupplier.supplierId,
+            materialRequestWellId : materialRequest.materialRequestWell.wellId,
+            materialRequestPhaseId:1,
+            materialRequestName: "Request-3",
+            materialRequestStatus: "REQUESTED",
+            materialRequestRequiredBy: "2024-10-01T00:00:00",
+            materialRequestFromLocationId: 1,
+            materialRequestToLocationId: 2,
+            materialRequestVesselId: 1,
+            materialRequestRemarks: "Urgent",
+            materialRequestRequestedByUserId: 53,
+            materialRequestToLocationType: "BASE",  
+            materialRequestFromLocationType: "RIG",  
+            materialRequestActive: true
+        }
+        axios.post(`http://localhost:8000/api/v1/material-requests`,JSON.stringify(createBody),{
+            headers: {
+              'Content-Type': 'application/json',
+            }
+          })
             .then(response => {
                 const data = response.data
                 console.log(data)
-                dispatch(bulkUploadMaterialRequestItemsFinalAction(file))
+                const materialRequestId = data.materialRequestId
+                dispatch(bulkUploadMaterialRequestItemsFinalAction(file,materialRequestId))
                 //dispatch(bulkUploadMaterialRequestItemsSuccess(data))
 
             })

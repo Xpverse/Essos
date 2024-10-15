@@ -5,16 +5,17 @@ import { CloudUpload, InsertDriveFile } from '@mui/icons-material';
 import { useDispatch, useSelector } from 'react-redux';
 import { fetchWellRequestData } from '../redux/actions/wellAction';
 import { fetchSupplierRequestData } from '../redux/actions/supplierAction';
+import { postMaterialRequestFinalAction } from '../redux/actions/materialRequestsAction';
 
 function MaterialRequestForm() {
   const dispatch = useDispatch();
   const [requestType, setRequestType] = React.useState(0);
   const [selectedFile, setSelectedFile] = useState(null);
-  const supplier = useSelector((state) => state.supplierReducer.suppliers || [])
+  const suppliers = useSelector((state) => state.supplierReducer.suppliers || [])
   const [formValues, setFormValues] = useState({
-    materialRequestWell: '',
+    materialRequestWell: {},
     materialRequestBlock: '',
-    coordinates: ''
+    materialRequestSupplier:{},
   });
 
   const handleInputChange = (event) => {
@@ -25,16 +26,33 @@ function MaterialRequestForm() {
     });
   };
 
+  const handleWellChange = (event) => {
+    const selectedWell = wells.find(well => well.wellName === event.target.value);
+    setFormValues({
+      ...formValues,
+      materialRequestWell: selectedWell 
+    });
+  };
+
+  const handleSupplierChange = (event) => {
+    const selectedSupplier = suppliers.find(supplier => supplier.supplierName === event.target.value);
+    setFormValues({
+      ...formValues,
+      materialRequestSupplier: selectedSupplier 
+    });
+  };
+
   const handleTabChange = (event, newValue) => {
     setRequestType(newValue);
   };
   
-  const wells = useSelector((state) => state.wellReducer.wells)
+  const wells = useSelector((state) => state.wellReducer.wells || [])
 
   useEffect(() => {
     
     dispatch(fetchWellRequestData())
     dispatch(fetchSupplierRequestData())
+    
   },[dispatch])
 
   const handleFileChange = (event) => {
@@ -48,7 +66,7 @@ function MaterialRequestForm() {
 
   const handleSubmit = (event) => {
     event.preventDefault(); 
-   
+    dispatch(postMaterialRequestFinalAction(formValues,selectedFile))
     console.log("Button clicked and form submitted!");
   };
   return (
@@ -123,25 +141,38 @@ function MaterialRequestForm() {
         <Box display="flex" flexDirection="column" gap="32px">
           
           <Box display="flex" gap="30px">
-            <FormControl fullWidth variant="outlined" size="medium">
+          <FormControl fullWidth variant="outlined" size="medium">
               <InputLabel>Well</InputLabel>
-              <Select label="Well" 
-              value={formValues.materialRequestWell} 
-              onChange={handleInputChange}
-              defaultValue="">
-                <MenuItem value="">Please Select Well</MenuItem>
-                {wells && wells.map((well, index) => (
+              <Select
+                label="Well"
+                name="materialRequestWell"
+                value={formValues.materialRequestWell ? formValues.materialRequestWell.wellName : ''}
+                onChange={handleWellChange}
+              >
+                {wells.map((well, index) => (
                   <MenuItem key={index} value={well.wellName}>
                     {well.wellName}
                   </MenuItem>
                 ))}
-               
               </Select>
-            </FormControl>
-
+          </FormControl>
             <TextField fullWidth label="Block" variant="outlined" size="medium" />
 
-            <TextField fullWidth label="Coordinates" variant="outlined" size="medium" />
+            <FormControl fullWidth variant="outlined" size="medium">
+              <InputLabel>Supplier</InputLabel>
+              <Select label="Supplier" 
+              name="materialRequestSupplier"
+              value={formValues.materialRequestSupplier ? formValues.materialRequestSupplier.supplierName : ''} 
+              onChange={handleSupplierChange}
+              >
+                {suppliers && suppliers.map((supplier, index) => (
+                  <MenuItem key={index} value={supplier.supplierName}>
+                    {supplier.supplierName}
+                  </MenuItem>
+                ))}
+               
+              </Select>
+            </FormControl>                
           </Box>
 
           
