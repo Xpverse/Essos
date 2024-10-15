@@ -6,9 +6,11 @@ import { useDispatch, useSelector } from 'react-redux';
 import { fetchWellRequestData } from '../redux/actions/wellAction';
 import { fetchSupplierRequestData } from '../redux/actions/supplierAction';
 import { postMaterialRequestFinalAction } from '../redux/actions/materialRequestsAction';
+import { useNavigate } from 'react-router-dom';
 
 function MaterialRequestForm() {
   const dispatch = useDispatch();
+  const navigate = useNavigate()
   const [requestType, setRequestType] = React.useState(0);
   const [selectedFile, setSelectedFile] = useState(null);
   const suppliers = useSelector((state) => state.supplierReducer.suppliers || [])
@@ -67,6 +69,7 @@ function MaterialRequestForm() {
   const handleSubmit = (event) => {
     event.preventDefault(); 
     dispatch(postMaterialRequestFinalAction(formValues,selectedFile))
+    navigate('/test')
     console.log("Button clicked and form submitted!");
   };
   return (
@@ -265,7 +268,7 @@ function MaterialRequestForm() {
             fontSize: '16px',
           }}
         >
-          Create Material Request
+          Submit Request
         </Button>
       </Box>
     </Container>

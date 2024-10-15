@@ -14,13 +14,16 @@ function MaterialRequestTable() {
   const rigs = useSelector((state) => state.rigReducer.rigs || [])
   const vessels = useSelector((state) => state.vesselReducer.vessels || [])
   const [currentRig,setCurrentRig] = useState({})
-
+  
   useEffect(() =>{
     dispatch(fetchMaterialRequestData())
     dispatch(fetchRigRequestData())
     dispatch(fetchVesselRequestData())
   },[dispatch])
 
+  const handleCreateClick = () => {
+    navigate('/test2')
+  }
 
   const handleNavigation = (id) => {
    
@@ -124,6 +127,7 @@ function MaterialRequestTable() {
           variant="contained"
           color="primary"
           style={{ borderRadius: '20px', padding: '8px 16px', backgroundColor: '#009688' }} 
+          onClick={handleCreateClick}
         >
           + Create Material Request
         </Button>
