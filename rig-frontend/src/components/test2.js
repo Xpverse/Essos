@@ -14,12 +14,18 @@ function MaterialRequestForm() {
   const [requestType, setRequestType] = React.useState(0);
   const [selectedFile, setSelectedFile] = useState(null);
   const suppliers = useSelector((state) => state.supplierReducer.suppliers || [])
+  const wells = useSelector((state) => state.wellReducer.wells || [])
+  const rigWellMaps = useSelector((state) => state.rigWellMapReducer.rigWellMaps || [])
   const [formValues, setFormValues] = useState({
     materialRequestWell: {},
     materialRequestBlock: '',
     materialRequestSupplier:{},
   });
-
+  
+  const eligibleRigs = rigWellMaps.map(rigWellMap => 
+    rigWellMap.well === formValues["materialRequestWell"] ? rigWellMap.rig : null
+  ).filter(rig => rig !== null);
+  
   const handleInputChange = (event) => {
     const { name, value } = event.target;
     setFormValues({
@@ -47,8 +53,6 @@ function MaterialRequestForm() {
   const handleTabChange = (event, newValue) => {
     setRequestType(newValue);
   };
-  
-  const wells = useSelector((state) => state.wellReducer.wells || [])
 
   useEffect(() => {
     

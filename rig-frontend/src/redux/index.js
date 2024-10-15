@@ -7,6 +7,7 @@ import { wellReducer } from './reducers/wellReducer';
 import { rigReducer } from './reducers/rigReducer';
 import { vesselReducer } from './reducers/vesselReducer';
 import { supplierReducer } from './reducers/supplierReducer';
+import { rigWellMapReducer } from './reducers/rigwellmapReducer';
 
 const customMiddleware = [ thunk, logger];
 
@@ -17,6 +18,7 @@ const store = configureStore({
     rigReducer: rigReducer,
     vesselReducer: vesselReducer,
     supplierReducer:supplierReducer,
+    rigWellMapReducer:rigWellMapReducer
    
   },
   middleware: () => new Tuple(logger,thunk),
