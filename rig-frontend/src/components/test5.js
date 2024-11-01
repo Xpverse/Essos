@@ -2,6 +2,7 @@ import { React, useRef } from 'react';
 import { Container, Box, Typography, TextField, Button, Paper } from '@mui/material';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import { useDispatch } from 'react-redux';
+import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 const theme = createTheme({
   palette: {
@@ -13,7 +14,7 @@ const theme = createTheme({
 
 const LoginPage = () => {
   const dispatch = useDispatch();
-
+  const navigate = useNavigate()
   const emailRef = useRef();
   const passwordRef = useRef();
 
@@ -37,8 +38,10 @@ const LoginPage = () => {
       console.log(JSON.stringify(response?.data));
       const accessToken = response?.data;
       console.log("AccessToken", accessToken);
-    
-
+      
+      sessionStorage.setItem("accessToken",accessToken)
+      sessionStorage.setItem("email",loginBody.email)
+      navigate('/')
       // dispatch(loginRequestFinalAction(loginBody));
       alert('Login clicked!');
     } catch (error) {
