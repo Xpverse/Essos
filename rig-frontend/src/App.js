@@ -13,6 +13,8 @@ import {
 } from '@mui/material';
 import { Home as HomeIcon, AccountTree as AccountTreeIcon, Settings as SettingsIcon } from '@mui/icons-material';
 import MaterialRequest2 from './components/test6';
+import VesselsTable from './components/vess1';
+import VesselMaterialRequest from './components/vess2';
 
 
 const drawerWidth = 50;
@@ -80,6 +82,8 @@ function AppLayout() {
           <Route path="/test3/:id" element={<MaterialRequestSummary />} />
           <Route path="/test4" element={<BeautifulTable />} />
           <Route path="/test6" element={<MaterialRequest2/>}/>
+          <Route path="/ves1" element={<VesselsTable/>} />
+          <Route path="/ves2" element={<VesselMaterialRequest/>} />
         </Routes>
       </Box>
     </div>
