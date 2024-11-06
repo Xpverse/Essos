@@ -1,4 +1,9 @@
-import React, { useState } from "react";
+import React, { useState ,useEffect} from "react";
+import {useDispatch,useSelector} from 'react-redux'
+import { fetchMaterialRequestData } from '../redux/actions/materialRequestsAction';
+import { fetchRigRequestData } from '../redux/actions/rigAction';
+import { fetchVesselRequestData } from '../redux/actions/vesselAction';
+import { useNavigate } from 'react-router-dom';
 import {
   Box,
   Button,
@@ -23,6 +28,57 @@ const MaterialRequest2 = () => {
   const handleStatusChange = (status) => {
     setStatusFilter(status);
   };
+
+  const dispatch = useDispatch()
+  const navigate = useNavigate();
+  const materialRequests = useSelector((state) => state.materialRequestReducer.materialRequests)
+  const rigs = useSelector((state) => state.rigReducer.rigs || [])
+  const vessels = useSelector((state) => state.vesselReducer.vessels || [])
+  const [currentRig,setCurrentRig] = useState({})
+  
+  useEffect(() =>{
+    dispatch(fetchMaterialRequestData())
+    dispatch(fetchRigRequestData())
+    dispatch(fetchVesselRequestData())
+  },[dispatch])
+
+  const handleCreateClick = () => {
+    navigate('/createMaterialRequest')
+  }
+
+  const handleNavigation = (id) => {
+   
+    navigate(`/materialRequestSummary/${id}`); 
+  };
+
+  const handleRigChange = (event) => {
+    setCurrentRig(event.target.value);
+  };
+
+
+  // const filteredMaterialRequests = materialRequests.filter((request) =>
+  //    (request.materialRequestFromLocationType=="RIG" && request.materialRequestFromLocation))
+  const createData = (requestId,requestDate,requestName,section,requiredBy,requestFromLocation,requestToLocation,vessel,supplier,remarks,numberOfLifts,weightInTons,status) => {
+      return {requestId,requestDate,requestName,section,requiredBy,requestFromLocation,requestToLocation,vessel,supplier,remarks,numberOfLifts,weightInTons,status}   
+  }
+
+  const records = materialRequests.map((materialRequest) => createData(
+    materialRequest.materialRequestId,
+   '12/12/2024',
+   materialRequest.materialRequestName,
+   'Section-1',
+   materialRequest.materialRequestRequiredBy,
+   materialRequest.materialRequestFromLocation.locationName,
+   materialRequest.materialRequestToLocation.locationName,
+   materialRequest.materialRequestVessel.vesselName,
+   materialRequest.materialRequestSupplier.supplierName,
+   1,
+   10,
+   materialRequest.materialRequestRemarks,
+   materialRequest.materialRequestStatus,
+
+
+  ))
 
   // Table Data
   const tableData = [
@@ -55,6 +111,7 @@ const MaterialRequest2 = () => {
             fontWeight: "bold",
             "&:hover": { backgroundColor: "#E0F7FA", borderColor: "#008080" },
           }}
+          onClick={handleCreateClick}
         >
           + Create Material Request
         </Button>
@@ -65,24 +122,27 @@ const MaterialRequest2 = () => {
         <FormControl fullWidth variant="outlined">
           <InputLabel sx={{ fontWeight: "bold" }}>Select Rig</InputLabel>
           <Select label="Select Rig">
-            <MenuItem value={"Rig_1"}>Rig_1</MenuItem>
-            <MenuItem value={"Rig_2"}>Rig_2</MenuItem>
+            {
+              rigs && rigs.map((rig) => (<MenuItem value={rig.rigName}>{rig.rigName} </MenuItem>))
+            }
           </Select>
         </FormControl>
 
         <FormControl fullWidth variant="outlined">
           <InputLabel sx={{ fontWeight: "bold" }}>Select Vessel</InputLabel>
           <Select label="Select Vessel">
-            <MenuItem value={"Vessel-1"}>Vessel-1</MenuItem>
-            <MenuItem value={"Vessel-2"}>Vessel-2</MenuItem>
+            {
+              vessels && vessels.map((vessel) => (<MenuItem value={vessel.vesselName}>{vessel.vesselName} </MenuItem>))
+            }
           </Select>
         </FormControl>
 
         <FormControl fullWidth variant="outlined">
           <InputLabel sx={{ fontWeight: "bold" }}>Select Type</InputLabel>
           <Select label="Select Type">
-            <MenuItem value={"Type_1"}>Type 1</MenuItem>
-            <MenuItem value={"Type_2"}>Type 2</MenuItem>
+            <MenuItem value={"BackLoad Request"}>BackLoad Request</MenuItem>
+            <MenuItem value={"Transfer Request"}>Transfer Request</MenuItem>
+            <MenuItem value={"Material Request"}>Material Request</MenuItem>
           </Select>
         </FormControl>
       </Box>
@@ -236,10 +296,10 @@ const MaterialRequest2 = () => {
             </TableRow>
           </TableHead>
           <TableBody>
-            {tableData.map((row, index) => (
+            {records.map((row, index) => (
               <TableRow key={index}>
                 <TableCell>{row.requestDate}</TableCell>
-                <TableCell>
+                <TableCell  onClick={() => handleNavigation(row.requestId)}>
                   <Typography
                     variant="body2"
                     sx={{
@@ -248,7 +308,7 @@ const MaterialRequest2 = () => {
                       cursor: "pointer",
                     }}
                   >
-                    {row.requestNumber}
+                    {row.requestName}
                   </Typography>
                 </TableCell>
                 <TableCell>{row.section}</TableCell>
