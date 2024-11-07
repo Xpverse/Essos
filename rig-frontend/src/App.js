@@ -17,6 +17,7 @@ import { Home as HomeIcon, AccountTree as AccountTreeIcon, Settings as SettingsI
 import MaterialRequest2 from './components/test6';
 import VesselsTable from './components/vess1';
 import VesselMaterialRequest from './components/vess2';
+import UpdateMaterialRequestForm from './components/test7';
 
 
 const drawerWidth = 50;
@@ -112,9 +113,11 @@ function AppLayout() {
         <Routes>
           <Route path="/" element={<Homepage />} />
           <Route path="/materialRequests" element={<MaterialRequestTable />} />
+          <Route path="/updateMaterialRequests" element={<UpdateMaterialRequestForm />} />
           <Route path="/createMaterialRequest" element={<MaterialRequestForm />} />
           <Route path="/materialRequestSummary/:id" element={<MaterialRequestSummary />} />
           <Route path="/test4" element={<BeautifulTable />} />
+          <Route path="/vess2" element={<VesselMaterialRequest />} />
           <Route path="/materialRequest" element={<MaterialRequest2/>}/>
           <Route path="/vessels" element={<VesselsTable/>} />
           <Route path="/vesselDetails/:id" element={<VesselMaterialRequest/>} />

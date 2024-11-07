@@ -8,7 +8,7 @@ import { postMaterialRequestFinalAction } from '../redux/actions/materialRequest
 import { useNavigate } from 'react-router-dom';
 import { fetchRigWellMapRequestData } from '../redux/actions/rigwellmapAction';
 
-function MaterialRequestForm() {
+function UpdateMaterialRequestForm() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const [requestType, setRequestType] = useState(0);
@@ -90,7 +90,7 @@ function MaterialRequestForm() {
   return (
     <Container maxWidth="lg" style={{ padding: '40px 0' }}>
       <Typography variant="h4" gutterBottom style={{ fontWeight: 'bold', color: '#333', marginBottom: '30px' }}>
-        Create Material Request
+        Update Material Request
       </Typography>
 
       <Tabs
@@ -301,11 +301,11 @@ function MaterialRequestForm() {
           onClick={handleSubmit}
           style={{ borderRadius: '24px', padding: '12px 28px', backgroundColor: '#00796B', fontSize: '16px' }}
         >
-          Submit Request
+          Update Request
         </Button>
       </Box>
     </Container>
   );
 }
 
-export default MaterialRequestForm;
+export default UpdateMaterialRequestForm;
