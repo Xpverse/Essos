@@ -18,6 +18,8 @@ import MaterialRequest2 from './components/test6';
 import VesselsTable from './components/vess1';
 import VesselMaterialRequest from './components/vess2';
 import UpdateMaterialRequestForm from './components/test7';
+import AddVesselJourney from './components/vess3';
+
 
 
 const drawerWidth = 50;
@@ -118,6 +120,7 @@ function AppLayout() {
           <Route path="/materialRequestSummary/:id" element={<MaterialRequestSummary />} />
           <Route path="/test4" element={<BeautifulTable />} />
           <Route path="/vess2" element={<VesselMaterialRequest />} />
+          <Route path="/addVesselJourney" element={<AddVesselJourney />} />
           <Route path="/materialRequest" element={<MaterialRequest2/>}/>
           <Route path="/vessels" element={<VesselsTable/>} />
           <Route path="/vesselDetails/:id" element={<VesselMaterialRequest/>} />

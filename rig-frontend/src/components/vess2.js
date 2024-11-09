@@ -1,16 +1,20 @@
 import React, { useState } from 'react';
-import { Box, Button, Checkbox, Container, IconButton, MenuItem, Select, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Typography, Paper } from '@mui/material';
+import { Box, Button, Checkbox, Container, IconButton, MenuItem, Chip, Select, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Typography, Paper, Divider, Grid } from '@mui/material';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
+import CheckCircleIcon from '@mui/icons-material/CheckCircle';
+import BoltIcon from '@mui/icons-material/Bolt';
+import InsertDriveFileIcon from '@mui/icons-material/InsertDriveFile';
+import DownloadIcon from '@mui/icons-material/Download';
 
 const VesselMaterialRequest = () => {
   const [selectedVessel, setSelectedVessel] = useState('');
   const [selectedRows, setSelectedRows] = useState([]);
-  
+
   const vessels = [
-    "Vessel Name 1 (Capacity)", 
-    "Vessel Name 2 (Capacity)", 
-    "Vessel Name 3 (Capacity)", 
-    "Vessel Name 4 (Capacity)", 
+    "Vessel Name 1 (Capacity)",
+    "Vessel Name 2 (Capacity)",
+    "Vessel Name 3 (Capacity)",
+    "Vessel Name 4 (Capacity)",
     "Vessel Name 5 (Capacity)"
   ];
 
@@ -19,8 +23,8 @@ const VesselMaterialRequest = () => {
   };
 
   const rows = [
-    { srNo: 1, matCode: 'H115904-37 REF', description: 'HP WELLHEAD HSG UNIT, ASSEMBLY', qty: 1, uom: 'Each', owner: 'Each', packingDetails: 'Each', dimensions: '30 x 30 x 50', weight: 'weight' },
-    { srNo: 2, matCode: 'H115904-37 REF', description: 'HP WELLHEAD HSG UNIT, ASSEMBLY', qty: 1, uom: 'Each', owner: 'Each', packingDetails: 'Each', dimensions: '30 x 30 x 50', weight: 'weight' },
+    { srNo: 1, matCode: 'H115904-37 REF', description: 'HP WELLHEAD HSG UNIT, ASSEMBLY', qty: 1, uom: 'Each', owner: 'Each', packingDetails: 'Each', dimensions: '30 x 30 x 50', weight: 'weight', remarks: 'Test1' },
+    { srNo: 2, matCode: 'H115904-37 REF', description: 'HP WELLHEAD HSG UNIT, ASSEMBLY', qty: 1, uom: 'Each', owner: 'Each', packingDetails: 'Each', dimensions: '30 x 30 x 50', weight: 'weight', remarks: 'Test1' },
   ];
 
   const handleSelectAllClick = (event) => {
@@ -55,7 +59,8 @@ const VesselMaterialRequest = () => {
   const isSelected = (srNo) => selectedRows.indexOf(srNo) !== -1;
 
   return (
-    <Container>
+    <Container >
+      {/* Navigation */}
       <Box display="flex" alignItems="center" mb={2}>
         <IconButton>
           <ArrowBackIcon />
@@ -63,69 +68,150 @@ const VesselMaterialRequest = () => {
         <Typography variant="h6" style={{ marginLeft: 8 }}>Material Requests</Typography>
       </Box>
 
-      <Box display="flex" justifyContent="space-between" alignItems="center" mb={2}>
-        <Button variant="outlined" startIcon={<ArrowBackIcon />} style={{ color: '#008080', borderColor: '#008080' }}>
-          Create Material Request
-        </Button>
+      {/* Material Requests, Bulk Occupied, and Details Section */}
+      <Grid container spacing={4}>
+        {/* Material Requests */}
+        <Grid item xs={4}>
+          <Typography variant="subtitle1">1. Material Requests</Typography>
+          <Paper elevation={3} style={{ padding: '16px', borderRadius: '8px' }}>
+            <Box display="flex" alignItems="center" justifyContent="space-between">
+              <Typography variant="body1">1. mr_20240925105600</Typography>
+              <Box display="flex" gap={1}>
+                <Chip label="43 Lifts" variant="outlined" color="warning" />
+                <Chip label="Rig_2" variant="outlined" color="primary" />
+              </Box>
+            </Box>
+          </Paper>
+        </Grid>
 
-        <Box display="flex" alignItems="center">
-          <Select
-            value={selectedVessel}
-            onChange={handleVesselChange}
-            displayEmpty
-            variant="outlined"
-            style={{ marginRight: 8, minWidth: 180, height: 40 }}
-            MenuProps={{ PaperProps: { style: { maxHeight: 200 } } }}
-          >
-            <MenuItem value="" disabled>Select Vessel</MenuItem>
-            {vessels.map((vessel, index) => (
-              <MenuItem key={index} value={vessel}>{vessel}</MenuItem>
-            ))}
-          </Select>
-          <Button variant="contained" color="primary" style={{ backgroundColor: '#008080', height: 40 , borderRadius: 20}}>
-            Assign
-          </Button>
-        </Box>
-      </Box>
+        {/* Bulk Occupied Section */}
+        <Grid item xs={4}>
+          <Typography variant="subtitle1">Bulk Occupied</Typography>
+          <Paper elevation={3} style={{ padding: '16px', borderRadius: '8px' }}>
+            <Box display="flex" justifyContent="space-around">
+              {['Fuel', 'Water', 'Brine', 'Deck', 'Mud'].map((item) => (
+                <Box
+                  key={item}
+                  border="1px solid #FFD700"
+                  borderRadius="4px"
+                  width="60px"
+                  height="60px"
+                  display="flex"
+                  alignItems="center"
+                  justifyContent="center"
+                  textAlign="center"
+                  flexDirection="column"
+                >
+                  <Typography variant="subtitle2">{item}</Typography>
+                  <Typography variant="body2">-</Typography>
+                </Box>
+              ))}
+            </Box>
+          </Paper>
+        </Grid>
 
-      <Box display="flex" justifyContent="space-between" mb={2}>
-        <Box>
-          <Typography variant="subtitle2" color="textSecondary">Material Request</Typography>
-          <Typography variant="body1" color="primary">Well-1 Drilling 36"</Typography>
+        {/* Details Section */}
+        <Grid item xs={4}>
+          <Typography variant="subtitle1">Details</Typography>
+          <Paper elevation={3} style={{ padding: '16px', borderRadius: '8px' }}>
+            <Box display="flex" flexDirection="column" alignItems="flex-end" justifyContent="space-between">
+              <Box display="flex" justifyContent="space-between" width="100%" mb={2}>
+                <Typography variant="body2" style={{ fontWeight: 'bold' }}>VESSEL BERTHING TIME</Typography>
+                <Box textAlign="right">
+                  <Typography variant="body1" color="primary">29 September 2024</Typography>
+                  <Typography variant="body1" color="primary">12:32 PM</Typography>
+                </Box>
+              </Box>
 
-          <Typography variant="subtitle2" color="textSecondary">Phase</Typography>
-          <Typography variant="body1" color="primary">Drilling 36" hole</Typography>
+              <Box display="flex" justifyContent="space-between" width="100%" mb={2}>
+                <Typography variant="body2" style={{ fontWeight: 'bold' }}>VESSEL SAILING TIME</Typography>
+                <Box textAlign="right">
+                  <Typography variant="body1" color="primary">29 September 2024</Typography>
+                  <Typography variant="body1" color="primary">12:32 PM</Typography>
+                </Box>
+              </Box>
 
-          <Typography variant="subtitle2" color="textSecondary">Required by</Typography>
-          <Typography variant="body1" color="primary">24-jul-24</Typography>
+              <Box display="flex" justifyContent="space-between" width="100%" mb={2}>
+                <Typography variant="body2" style={{ fontWeight: 'bold' }}>TOTAL WEIGHT IN TONS</Typography>
+                <Typography variant="body1" color="primary">344 Tons</Typography>
+              </Box>
 
-          <Typography variant="subtitle2" color="textSecondary">Requested by</Typography>
-          <Typography variant="body1" color="primary">Supplier User-1</Typography>
+              <Box display="flex" justifyContent="space-between" width="100%">
+                <Typography variant="body2" style={{ fontWeight: 'bold' }}>NO. OF LIFTS</Typography>
+                <Typography variant="body1" color="primary">43 Lifts</Typography>
+              </Box>
+            </Box>
+          </Paper>
+        </Grid>
+        {/* Shipment Tracking Section */}
+        <Grid item xs={12}>
+          <Typography variant="h6" gutterBottom>Shipment Tracking</Typography>
+          <Box display="flex" alignItems="center" justifyContent="center" mt={2}>
+            {/* First Checkpoint */}
+            <Box textAlign="center">
+              <CheckCircleIcon sx={{ color: '#008080' }} fontSize="large" />
+              <Typography variant="body2" style={{ color: '#6c757d', marginTop: '4px' }}>Base</Typography>
+            </Box>
+            <Divider flexItem orientation="horizontal" sx={{ width: '100px', marginTop: '16px', height: '2px', backgroundColor: '#008080', mx: 4 }} />
 
-          <Typography variant="subtitle2" color="textSecondary">From</Typography>
-          <Typography variant="body1" color="primary">Base, Kakinada, Andhra Pradesh</Typography>
+            {/* Midpoint */}
+            <Box textAlign="center">
+              <CheckCircleIcon sx={{ color: '#008080' }} fontSize="large" />
+              <Typography variant="body2" style={{ color: '#6c757d', marginTop: '4px' }}>Rig_2</Typography>
+            </Box>
+            <Divider flexItem orientation="horizontal" sx={{ width: '100px', marginTop: '16px', height: '2px', backgroundColor: '#008080', mx: 4 }} />
 
-          <Typography variant="subtitle2" color="textSecondary">To</Typography>
-          <Typography variant="body1" color="primary">Rig-1</Typography>
-        </Box>
+            {/* Last Checkpoint */}
+            <Box textAlign="center">
+              <CheckCircleIcon sx={{ color: '#008080' }} fontSize="large" />
+              <Typography variant="body2" style={{ color: '#6c757d', marginTop: '4px' }}>Base</Typography>
+            </Box>
 
-        <Box textAlign="right">
-          <Box mt={2}>
-            <Typography variant="subtitle2" color="textSecondary">Well</Typography>
-            <Typography variant="body1" color="primary">Well-1</Typography>
-
-            <Typography variant="subtitle2" color="textSecondary">Block</Typography>
-            <Typography variant="body1" color="primary">Block-1</Typography>
-
-            <Typography variant="subtitle2" color="textSecondary">Coordinates</Typography>
-            <Typography variant="body1" color="primary">
-              Lat: 11° 35' 36.608" N, Lon: 80°19'54.877E
-            </Typography>
+            {/* Current Status Indicator */}
+            <Box display="flex" alignItems="center" mt={5} ml={1}>
+              <Box
+                display="flex"
+                alignItems="center"
+                sx={{
+                  backgroundColor: '#333',
+                  color: '#fff',
+                  padding: '2px 4px',
+                  borderRadius: '10px',
+                  display: 'inline-flex',
+                }}
+              >
+                <BoltIcon sx={{ fontSize: '18px', color: '#fff', mr: 0 }} />
+                <Typography variant="body2" sx={{ fontWeight: 'bold', mr: 1 }}>
+                  Current
+                </Typography>
+              </Box>
+            </Box>
           </Box>
+        </Grid>
+        <Box mt={4} mb={2} sx={{ display: 'flex', justifyContent: 'center' }}>
+          <Divider
+            sx={{
+              width: '80%', // Adjusts the length of the line
+              borderColor: '#e0e0e0',
+              borderWidth: '1.5px',
+            }}
+          />
         </Box>
-      </Box>
+      </Grid>
+      <Box display="flex" alignItems="center" mb={1} mt={3}>
+        {/* File Icon */}
+        <InsertDriveFileIcon sx={{ color: '#008080', fontSize: '20px' }} />
 
-      <Typography variant="subtitle1" style={{ marginTop: 16 }}>Required Item Details</Typography>
+        {/* Text */}
+        <Typography variant="body1" sx={{ color: '#008080', fontWeight: 'bold', ml: 1 }}>
+          Downloaded Tables
+        </Typography>
+
+        {/* Download Icon */}
+        <DownloadIcon sx={{ color: '#008080', ml: 1, fontSize: '20px' }} />
+      </Box>
+      {/* Required Item Details Table */}
+      <Typography variant="subtitle1" style={{ marginTop: 40 }}>Required Item Details</Typography>
       <TableContainer component={Paper} style={{ marginTop: 16 }}>
         <Table>
           <TableHead>
@@ -147,6 +233,7 @@ const VesselMaterialRequest = () => {
               <TableCell>Packing Details</TableCell>
               <TableCell>Dimensions (L x W x H)</TableCell>
               <TableCell>Wt.</TableCell>
+              <TableCell>Remarks</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
@@ -174,6 +261,7 @@ const VesselMaterialRequest = () => {
                   <TableCell>{row.packingDetails}</TableCell>
                   <TableCell>{row.dimensions}</TableCell>
                   <TableCell>{row.weight}</TableCell>
+                  <TableCell>{row.remarks}</TableCell>
                 </TableRow>
               );
             })}
