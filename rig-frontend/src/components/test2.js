@@ -26,7 +26,7 @@ function MaterialRequestForm() {
   const eligibleRigs = rigWellMaps.map(rigWellMap => 
     rigWellMap.well.wellId === formValues["materialRequestWell"].wellId ? rigWellMap.rig : null
   ).filter(rig => rig !== null);
-  
+
   const handleInputChange = (event) => {
     const { name, value } = event.target;
     setFormValues({
@@ -56,11 +56,11 @@ function MaterialRequestForm() {
   };
 
   useEffect(() => {
-    
+
     dispatch(fetchWellRequestData())
     dispatch(fetchSupplierRequestData())
     dispatch(fetchRigWellMapRequestData())
-    
+
   },[dispatch])
 
   const handleFileChange = (event) => {
@@ -80,12 +80,12 @@ function MaterialRequestForm() {
   };
   return (
     <Container maxWidth="lg" style={{ padding: '40px 0' }}>
-      
+
       <Typography variant="h4" gutterBottom style={{ fontWeight: 'bold', color: '#333', marginBottom: '30px' }}>
         Create Material Request
       </Typography>
 
-      
+
       <Tabs
         value={requestType}
         onChange={handleTabChange}
@@ -136,7 +136,7 @@ function MaterialRequestForm() {
         />
       </Tabs>
 
-      
+
       <Paper
         style={{
           padding: '40px',
@@ -148,7 +148,7 @@ function MaterialRequestForm() {
         elevation={0}
       >
         <Box display="flex" flexDirection="column" gap="32px">
-          
+
           <Box display="flex" gap="30px">
           <FormControl fullWidth variant="outlined" size="medium">
               <InputLabel>Well</InputLabel>
@@ -179,18 +179,18 @@ function MaterialRequestForm() {
                     {supplier.supplierName}
                   </MenuItem>
                 ))}
-               
+
               </Select>
             </FormControl>                
           </Box>
 
-          
+
           <Box display="flex" gap="30px">
             <FormControl fullWidth variant="outlined" size="medium">
               <InputLabel>From</InputLabel>
               <Select label="From" defaultValue="">
                 <MenuItem value="">Place Holder</MenuItem>
-                
+
               </Select>
             </FormControl>
 
@@ -209,7 +209,7 @@ function MaterialRequestForm() {
             <TextField fullWidth label="Request Number" variant="outlined" size="medium" />
           </Box>
 
-          
+
           <Box display="flex" gap="30px">
             <TextField fullWidth label="Section" variant="outlined" size="medium" />
 
@@ -222,13 +222,13 @@ function MaterialRequestForm() {
               InputLabelProps={{
                 shrink: true, 
               }}
-              
+
             />
 
             <TextField fullWidth label="Requested By" variant="outlined" size="medium" />
           </Box>
 
-          
+
           <Box textAlign="center" marginTop="32px">
           <div>
           <label>
@@ -284,5 +284,4 @@ function MaterialRequestForm() {
     </Container>
   );
 }
-
 export default MaterialRequestForm;
