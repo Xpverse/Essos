@@ -17,10 +17,13 @@ function MaterialRequestForm() {
   const suppliers = useSelector((state) => state.supplierReducer.suppliers || [])
   const wells = useSelector((state) => state.wellReducer.wells || [])
   const rigWellMaps = useSelector((state) => state.rigWellMapReducer.rigWellMaps || [])
+  const rigs = useSelector((state) => state.rigReducer.rigs || [])
   const [formValues, setFormValues] = useState({
     materialRequestWell: {},
-    materialRequestBlock: '',
     materialRequestSupplier:{},
+    materialRequestFromLocation:{},
+    materialRequestToLocation:{},
+    materialRequestType:''
   });
 
   const eligibleRigs = rigWellMaps.map(rigWellMap => 
@@ -35,12 +38,14 @@ function MaterialRequestForm() {
     });
   };
 
-  const handleWellChange = (event) => {
+  const handleWellChange =  (event) => {
     const selectedWell = wells.find(well => well.wellName === event.target.value);
+    console.log(selectedWell)
     setFormValues({
       ...formValues,
       materialRequestWell: selectedWell 
     });
+    console.log(formValues)
   };
 
   const handleSupplierChange = (event) => {
@@ -49,10 +54,48 @@ function MaterialRequestForm() {
       ...formValues,
       materialRequestSupplier: selectedSupplier 
     });
+    console.log(formValues)
   };
 
+  const handleFromLocationChange = (event) => {
+    const selectedFromLocation = rigs.find(rig => rig.rigName === event.target.value);
+    setFormValues({
+      ...formValues,
+      materialRequestFromLocation: selectedFromLocation 
+    });
+    console.log(formValues)
+  };
+
+  const handleToLocationChange = (event) => {
+    const selectedToLocation = rigs.find(rig => rig.rigName === event.target.value);
+    setFormValues({
+      ...formValues,
+      materialRequestToLocation: selectedToLocation 
+    });
+    console.log(formValues)
+  };
+
+
   const handleTabChange = (event, newValue) => {
-    setRequestType(newValue);
+    let requestTypeValue;
+    switch (newValue) {
+      case 0:
+        requestTypeValue = 'MATERIAL_REQUEST';
+        break;
+      case 1:
+        requestTypeValue = 'TRANSFER_REQUEST';
+        break;
+      case 2:
+        requestTypeValue = 'BACKLOAD_REQUEST';
+        break;
+      default:
+      requestTypeValue = '';
+    }
+
+    setFormValues({
+      ...formValues,
+      materialRequestType: requestTypeValue,
+    });
   };
 
   useEffect(() => {
@@ -165,7 +208,15 @@ function MaterialRequestForm() {
                 ))}
               </Select>
           </FormControl>
-            <TextField fullWidth label="Block" variant="outlined" size="medium" />
+          <Typography
+            fullWidth
+            size="medium"
+            variant="body1"
+            style={{ padding: '16px', backgroundColor: '#f0f0f0', borderRadius: '8px' }}
+          >
+          {formValues["materialRequestWell"]?.wellBlock || 'N/A'}
+          </Typography>
+
 
             <FormControl fullWidth variant="outlined" size="medium">
               <InputLabel>Supplier</InputLabel>
@@ -188,15 +239,28 @@ function MaterialRequestForm() {
           <Box display="flex" gap="30px">
             <FormControl fullWidth variant="outlined" size="medium">
               <InputLabel>From</InputLabel>
-              <Select label="From" defaultValue="">
-                <MenuItem value="">Place Holder</MenuItem>
-
+              <Select label="From"
+              name="materialRequestFromLocation"
+              value={formValues.materialRequestFromLocation ? formValues.materialRequestFromLocation.rigName : ''} 
+              onChange={handleFromLocationChange}
+              >
+              
+              {eligibleRigs && eligibleRigs.map((eligibleRig, index) => (
+                  <MenuItem key={index} value={eligibleRig.rigName}>
+                    {eligibleRig.rigName}
+                  </MenuItem>
+              ))} 
+                
               </Select>
             </FormControl>
 
             <FormControl fullWidth variant="outlined" size="medium">
               <InputLabel>To</InputLabel>
-              <Select label="To" defaultValue="">
+              <Select label="To"
+              name="materialRequestToLocation"
+              value={formValues.materialRequestToLocation ? formValues.materialRequestToLocation.rigName : ''} 
+              onChange={handleToLocationChange}
+              >
                 {eligibleRigs && eligibleRigs.map((eligibleRig, index) => (
                   <MenuItem key={index} value={eligibleRig.rigName}>
                     {eligibleRig.rigName}
