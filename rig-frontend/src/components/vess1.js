@@ -29,7 +29,10 @@ const VesselsTable = () => {
     const id = record.vesselId
     navigate(`/createOrEditVesselJourney/${id}`)
   };
-
+  const handleViewClick = (record) => {
+    const id = record.vesselId
+    navigate(`/createOrEditVesselJourney/${id}`)
+  };
   const records = vessels.map((vessel) =>
     createData(
       vessel.vesselId,
