@@ -1,14 +1,23 @@
-import React, { useState } from 'react';
+import React, { useState,useEffect } from 'react';
 import { Container, Typography, Button, TextField, Box, MenuItem, FormControl, Select, InputLabel, Divider } from '@mui/material';
+import { useDispatch ,useSelector} from 'react-redux';
 
-const AddVesselJourney = ({ vesselName }) => {
+const AddVesselJourney = ({ id }) => {
   const [stops, setStops] = useState([]);
   const [selectedLocation, setSelectedLocation] = useState('');
+
+  const dispatch = useDispatch()
+
+  useEffect(() =>{
+    //dispatch(fetchCurrentVesselFinalAction(id))
+  },[dispatch])
+
+  const currentVessel = useSelector((state)=> state.vesselReducer.currentVessel)
 
   const handleAddStop = () => {
     if (selectedLocation) {
       setStops([...stops, selectedLocation]);
-      setSelectedLocation(''); // Clear the input after adding
+      setSelectedLocation('');
     }
   };
 
@@ -20,7 +29,7 @@ const AddVesselJourney = ({ vesselName }) => {
       </Box>
       
       <Typography variant="h5" gutterBottom>
-        Enter Journey Details for Vessel <strong style={{ color: '#00796B' }}>{vesselName}</strong>
+        Enter Journey Details for Vessel <strong style={{ color: '#00796B' }}>{id}</strong>
       </Typography>
 
       <Box display="flex" gap={2} mb={3}>

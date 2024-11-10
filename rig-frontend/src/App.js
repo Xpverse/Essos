@@ -114,7 +114,6 @@ function AppLayout() {
       <Box component="main" sx={{ flexGrow: 1, bgcolor: 'background.default', p: 3, ml: `${drawerWidth}px`, mt: '64px' }}>
         <Routes>
           <Route path="/" element={<Homepage />} />
-          <Route path="/materialRequests" element={<MaterialRequestTable />} />
           <Route path="/updateMaterialRequests" element={<UpdateMaterialRequestForm />} />
           <Route path="/createMaterialRequest" element={<MaterialRequestForm />} />
           <Route path="/materialRequestSummary/:id" element={<MaterialRequestSummary />} />
@@ -124,7 +123,8 @@ function AppLayout() {
           <Route path="/materialRequest" element={<MaterialRequest2/>}/>
           <Route path="/vessels" element={<VesselsTable/>} />
           <Route path="/vesselDetails/:id" element={<VesselMaterialRequest/>} />
-          <Route path="/materialRequestsNew" element={<MaterialRequest2/>} />id
+          <Route path="/materialRequests" element={<MaterialRequest2/>} />
+          <Route path="/createOrEditVesselJourney" element={<AddVesselJourney/>}/>
         </Routes>
       </Box>
     </div>
