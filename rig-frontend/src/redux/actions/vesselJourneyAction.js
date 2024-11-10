@@ -5,6 +5,12 @@ export const FETCH_DATA_SUCCESS_VESSELJOURNEY = "FETCH_DATA_SUCCESS_VESSELJOURNE
 
 export const FETCH_DATA_FAILURE_VESSELJOURNEY = "FETCH_DATA_FAILURE_VESSELJOURNEY"
 
+export const POST_DATA_VESSELJOURNEY = "POST_DATA_VESSELJOURNEY"
+
+export const POST_DATA_SUCCESS_VESSELJOURNEY = "POST_DATA_SUCCESS_VESSELJOURNEY"
+
+export const POST_DATA_FAILURE_VESSELJOURNEY = "POST_DATA_FAILURE_VESSELJOURNEY"
+
 
 
 export const fetchVesselJourneyDataRequest = () => ({
@@ -18,6 +24,20 @@ export const fetchVesselJourneyDataSuccess = (data) => ({
 
 export const fetchVesselJourneyDataFailure = (error) => ({
     type: FETCH_DATA_FAILURE_VESSELJOURNEY,
+    payload: error
+})
+
+export const postVesselJourney = () => ({
+    type: POST_DATA_VESSELJOURNEY
+})
+
+export const postVesselJourneySuccess = (data) => ({
+    type: POST_DATA_SUCCESS_VESSELJOURNEY,
+    payload: data
+})
+
+export const postVesselJourneyFailure = (error) => ({
+    type: POST_DATA_FAILURE_VESSELJOURNEY,
     payload: error
 })
 
@@ -36,4 +56,29 @@ export const fetchVesselJourneyRequestData = () => {
                 dispatch(fetchVesselJourneyDataFailure(error))
             })
     }
+}
+
+export const postVesselJourneyFinalAction = (body) => {
+    return (dispatch) => {
+        dispatch(postVesselJourney())
+        const createBody = {
+            
+        }
+        
+        axios.post(`http://localhost:8000/api/v1/vessel-journeys`,JSON.stringify(createBody),{
+            headers: {
+              'Content-Type': 'application/json',
+            }
+          })
+            .then(response => {
+                const data = response.data
+                console.log(data)
+                
+                dispatch(postVesselJourneySuccess())
+            })
+            .catch(error => {
+                dispatch(postVesselJourneyFailure())
+            })
+    }
+    
 }

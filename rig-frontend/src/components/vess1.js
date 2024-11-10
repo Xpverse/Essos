@@ -25,6 +25,11 @@ const VesselsTable = () => {
     navigate(`/vesselDetails/${id}`);
   };
 
+  const handleCreateClick = (record) => {
+    const id = record.vesselId
+    navigate(`/createOrEditVesselJourney/${id}`)
+  };
+
   const records = vessels.map((vessel) =>
     createData(
       vessel.vesselId,
@@ -48,13 +53,13 @@ const VesselsTable = () => {
               <TableRow style={{ backgroundColor: '#b2ece9' }}>
                 <TableCell>Vessel Name</TableCell>
                 <TableCell>Cargo</TableCell>              
-                <TableCell>Bulk</TableCell>
-                <TableCell>Deck</TableCell>
-                <TableCell>Current Status</TableCell>
-                <TableCell>Current Location</TableCell>
-                <TableCell>Designation</TableCell>
-                <TableCell>Manifest</TableCell>
+                <TableCell>Bulk Occupied</TableCell>
+                <TableCell>Deck Occupied</TableCell>
+                <TableCell>Last Location</TableCell>
                 <TableCell>Journey</TableCell>
+                <TableCell>Remarks</TableCell>
+                <TableCell>Action</TableCell>
+                <TableCell>Journey Action</TableCell>
               </TableRow>
             </TableHead>
             <TableBody>
@@ -73,7 +78,16 @@ const VesselsTable = () => {
                   <TableCell>{record.vesselLocation}</TableCell>
                   <TableCell>{record.designation}</TableCell>
                   <TableCell>
-                    <IconButton style={{ color: '#008080' }}>
+                    <IconButton 
+                    style={{ color: '#008080' }}
+                    onClick={() => {
+                      if (record.vesselCreate === 'Create') {
+                        handleCreateClick(record);
+                      } else {
+                        handleViewClick(record);
+                      }
+                    }}
+                    >
                       {record.vesselCreate === 'Create' ? <AddIcon /> : <VisibilityIcon />}
                     </IconButton>
                     <Typography variant="body2" style={{ color: '#008080', cursor: 'pointer' }}>{record.vesselCreate}</Typography>
