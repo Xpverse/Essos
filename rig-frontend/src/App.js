@@ -96,7 +96,7 @@ function AppLayout() {
             </ListItem>
             <ListItem button>
               <ListItemIcon>
-                <AccountTreeIcon onClick={()=>navigate("/materialRequestsNew")}/>
+                <AccountTreeIcon onClick={()=>navigate("/materialRequests")}/>
               </ListItemIcon>
               
             </ListItem>
