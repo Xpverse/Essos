@@ -21,7 +21,7 @@ export const fetchRigDataFailure = (error) => ({
     payload: error
 })
 
-export const fetchRigRequestData = () => {
+export const fetchRigRequestData = () =>  {
     return (dispatch) => {
         dispatch(fetchRigDataRequest())
         console.log("Checkpoint 1")

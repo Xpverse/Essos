@@ -3,24 +3,47 @@ import './App.css';
 import Login from './components/login';
 import {BrowserRouter, Routes,Route, useLocation, useNavigate} from 'react-router-dom'
 import Homepage from './components/homepage';
+import { useState } from 'react';
+import DirectionsBoatIcon from '@mui/icons-material/DirectionsBoat';
 import MaterialRequestTable from './components/test';
 import MaterialRequestForm from './components/test2';
 import MaterialRequestSummary from './components/test3';
 import BeautifulTable from './components/test4';
 import LoginPage from './components/test5';
 import {
-  AppBar, Toolbar, Typography, Box, IconButton, Button,Drawer, List, ListItem, ListItemIcon, ListItemText,
+  AppBar, Toolbar, Typography, Box, IconButton, Button,Drawer, List, ListItem, ListItemIcon, ListItemText,Menu,MenuItem
 } from '@mui/material';
 import { Home as HomeIcon, AccountTree as AccountTreeIcon, Settings as SettingsIcon } from '@mui/icons-material';
 import MaterialRequest2 from './components/test6';
 import VesselsTable from './components/vess1';
 import VesselMaterialRequest from './components/vess2';
+import UpdateMaterialRequestForm from './components/test7';
+import AddVesselJourney from './components/vess3';
+
 
 
 const drawerWidth = 50;
 
 function AppLayout() {
   const navigate = useNavigate();
+  const email = sessionStorage.getItem('email');
+  const [anchorEl, setAnchorEl] = useState(null);
+
+  const handleMenuClick = (event) => {
+    setAnchorEl(event.currentTarget);
+  };
+
+  const handleMenuClose = () => {
+    setAnchorEl(null);
+  };
+
+  const handleLogout = () => {
+    
+    sessionStorage.removeItem('accessToken');
+    sessionStorage.removeItem('email');
+    navigate("/login"); 
+  };
+
   return (
     <div style={{ display: 'flex' }}>
       {/* Header */}
@@ -29,6 +52,20 @@ function AppLayout() {
           <Typography variant="h6" noWrap sx={{ flexGrow: 1 }}>
             Home
           </Typography>
+          {email && (
+          <>
+            <Button onClick={handleMenuClick}>
+              <strong>{email}</strong>
+            </Button>
+            <Menu
+              anchorEl={anchorEl}
+              open={Boolean(anchorEl)}
+              onClose={handleMenuClose}
+            >
+              <MenuItem onClick={handleLogout}>Log Out</MenuItem>
+            </Menu>
+          </>
+        )}
           <Typography variant="body1" noWrap onClick={()=>navigate("/login")}>
            <Button><strong>log in</strong></Button>
           </Typography>
@@ -59,13 +96,13 @@ function AppLayout() {
             </ListItem>
             <ListItem button>
               <ListItemIcon>
-                <AccountTreeIcon onClick={()=>navigate("/test6")}/>
+                <AccountTreeIcon onClick={()=>navigate("/materialRequests")}/>
               </ListItemIcon>
               
             </ListItem>
             <ListItem button>
               <ListItemIcon>
-                <SettingsIcon />
+                <DirectionsBoatIcon onClick={()=>navigate("/vessels")}/>
               </ListItemIcon>
               
             </ListItem>
@@ -77,13 +114,17 @@ function AppLayout() {
       <Box component="main" sx={{ flexGrow: 1, bgcolor: 'background.default', p: 3, ml: `${drawerWidth}px`, mt: '64px' }}>
         <Routes>
           <Route path="/" element={<Homepage />} />
-          <Route path="/test" element={<MaterialRequestTable />} />
-          <Route path="/test2" element={<MaterialRequestForm />} />
-          <Route path="/test3/:id" element={<MaterialRequestSummary />} />
+          <Route path="/updateMaterialRequests" element={<UpdateMaterialRequestForm />} />
+          <Route path="/createMaterialRequest" element={<MaterialRequestForm />} />
+          <Route path="/materialRequestSummary/:id" element={<MaterialRequestSummary />} />
           <Route path="/test4" element={<BeautifulTable />} />
-          <Route path="/test6" element={<MaterialRequest2/>}/>
-          <Route path="/ves1" element={<VesselsTable/>} />
-          <Route path="/ves2" element={<VesselMaterialRequest/>} />
+          <Route path="/vess2" element={<VesselMaterialRequest />} />
+          <Route path="/addVesselJourney" element={<AddVesselJourney />} />
+          <Route path="/materialRequest" element={<MaterialRequest2/>}/>
+          <Route path="/vessels" element={<VesselsTable/>} />
+          <Route path="/vesselDetails/:id" element={<VesselMaterialRequest/>} />
+          <Route path="/materialRequests" element={<MaterialRequest2/>} />
+          <Route path="/createOrEditVesselJourney" element={<AddVesselJourney/>}/>
         </Routes>
       </Box>
     </div>

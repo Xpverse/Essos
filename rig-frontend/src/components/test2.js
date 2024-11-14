@@ -5,17 +5,30 @@ import { CloudUpload, InsertDriveFile } from '@mui/icons-material';
 import { useDispatch, useSelector } from 'react-redux';
 import { fetchWellRequestData } from '../redux/actions/wellAction';
 import { fetchSupplierRequestData } from '../redux/actions/supplierAction';
+import { postMaterialRequestFinalAction } from '../redux/actions/materialRequestsAction';
+import { useNavigate } from 'react-router-dom';
+import { fetchRigWellMapRequestData } from '../redux/actions/rigwellmapAction';
 
 function MaterialRequestForm() {
   const dispatch = useDispatch();
+  const navigate = useNavigate()
   const [requestType, setRequestType] = React.useState(0);
   const [selectedFile, setSelectedFile] = useState(null);
-  const supplier = useSelector((state) => state.supplierReducer.suppliers || [])
+  const suppliers = useSelector((state) => state.supplierReducer.suppliers || [])
+  const wells = useSelector((state) => state.wellReducer.wells || [])
+  const rigWellMaps = useSelector((state) => state.rigWellMapReducer.rigWellMaps || [])
+  const rigs = useSelector((state) => state.rigReducer.rigs || [])
   const [formValues, setFormValues] = useState({
-    materialRequestWell: '',
-    materialRequestBlock: '',
-    coordinates: ''
+    materialRequestWell: {},
+    materialRequestSupplier:{},
+    materialRequestFromLocation:{},
+    materialRequestToLocation:{},
+    materialRequestType:''
   });
+
+  const eligibleRigs = rigWellMaps.map(rigWellMap => 
+    rigWellMap.well.wellId === formValues["materialRequestWell"].wellId ? rigWellMap.rig : null
+  ).filter(rig => rig !== null);
 
   const handleInputChange = (event) => {
     const { name, value } = event.target;
@@ -25,16 +38,72 @@ function MaterialRequestForm() {
     });
   };
 
-  const handleTabChange = (event, newValue) => {
-    setRequestType(newValue);
+  const handleWellChange =  (event) => {
+    const selectedWell = wells.find(well => well.wellName === event.target.value);
+    console.log(selectedWell)
+    setFormValues({
+      ...formValues,
+      materialRequestWell: selectedWell 
+    });
+    console.log(formValues)
   };
-  
-  const wells = useSelector((state) => state.wellReducer.wells)
+
+  const handleSupplierChange = (event) => {
+    const selectedSupplier = suppliers.find(supplier => supplier.supplierName === event.target.value);
+    setFormValues({
+      ...formValues,
+      materialRequestSupplier: selectedSupplier 
+    });
+    console.log(formValues)
+  };
+
+  const handleFromLocationChange = (event) => {
+    const selectedFromLocation = rigs.find(rig => rig.rigName === event.target.value);
+    setFormValues({
+      ...formValues,
+      materialRequestFromLocation: selectedFromLocation 
+    });
+    console.log(formValues)
+  };
+
+  const handleToLocationChange = (event) => {
+    const selectedToLocation = rigs.find(rig => rig.rigName === event.target.value);
+    setFormValues({
+      ...formValues,
+      materialRequestToLocation: selectedToLocation 
+    });
+    console.log(formValues)
+  };
+
+
+  const handleTabChange = (event, newValue) => {
+    let requestTypeValue;
+    switch (newValue) {
+      case 0:
+        requestTypeValue = 'MATERIAL_REQUEST';
+        break;
+      case 1:
+        requestTypeValue = 'TRANSFER_REQUEST';
+        break;
+      case 2:
+        requestTypeValue = 'BACKLOAD_REQUEST';
+        break;
+      default:
+      requestTypeValue = '';
+    }
+
+    setFormValues({
+      ...formValues,
+      materialRequestType: requestTypeValue,
+    });
+  };
 
   useEffect(() => {
-    
+
     dispatch(fetchWellRequestData())
     dispatch(fetchSupplierRequestData())
+    dispatch(fetchRigWellMapRequestData())
+
   },[dispatch])
 
   const handleFileChange = (event) => {
@@ -48,17 +117,18 @@ function MaterialRequestForm() {
 
   const handleSubmit = (event) => {
     event.preventDefault(); 
-   
+    dispatch(postMaterialRequestFinalAction(formValues,selectedFile))
+    navigate('/test')
     console.log("Button clicked and form submitted!");
   };
   return (
     <Container maxWidth="lg" style={{ padding: '40px 0' }}>
-      
+
       <Typography variant="h4" gutterBottom style={{ fontWeight: 'bold', color: '#333', marginBottom: '30px' }}>
         Create Material Request
       </Typography>
 
-      
+
       <Tabs
         value={requestType}
         onChange={handleTabChange}
@@ -109,7 +179,7 @@ function MaterialRequestForm() {
         />
       </Tabs>
 
-      
+
       <Paper
         style={{
           padding: '40px',
@@ -121,43 +191,81 @@ function MaterialRequestForm() {
         elevation={0}
       >
         <Box display="flex" flexDirection="column" gap="32px">
-          
+
           <Box display="flex" gap="30px">
-            <FormControl fullWidth variant="outlined" size="medium">
+          <FormControl fullWidth variant="outlined" size="medium">
               <InputLabel>Well</InputLabel>
-              <Select label="Well" 
-              value={formValues.materialRequestWell} 
-              onChange={handleInputChange}
-              defaultValue="">
-                <MenuItem value="">Please Select Well</MenuItem>
-                {wells && wells.map((well, index) => (
+              <Select
+                label="Well"
+                name="materialRequestWell"
+                value={formValues.materialRequestWell ? formValues.materialRequestWell.wellName : ''}
+                onChange={handleWellChange}
+              >
+                {wells.map((well, index) => (
                   <MenuItem key={index} value={well.wellName}>
                     {well.wellName}
                   </MenuItem>
                 ))}
-               
               </Select>
-            </FormControl>
+          </FormControl>
+          <Typography
+            fullWidth
+            size="medium"
+            variant="body1"
+            style={{ padding: '16px', backgroundColor: '#f0f0f0', borderRadius: '8px' }}
+          >
+          {formValues["materialRequestWell"]?.wellBlock || 'N/A'}
+          </Typography>
 
-            <TextField fullWidth label="Block" variant="outlined" size="medium" />
 
-            <TextField fullWidth label="Coordinates" variant="outlined" size="medium" />
+            <FormControl fullWidth variant="outlined" size="medium">
+              <InputLabel>Supplier</InputLabel>
+              <Select label="Supplier" 
+              name="materialRequestSupplier"
+              value={formValues.materialRequestSupplier ? formValues.materialRequestSupplier.supplierName : ''} 
+              onChange={handleSupplierChange}
+              >
+                {suppliers && suppliers.map((supplier, index) => (
+                  <MenuItem key={index} value={supplier.supplierName}>
+                    {supplier.supplierName}
+                  </MenuItem>
+                ))}
+
+              </Select>
+            </FormControl>                
           </Box>
 
-          
+
           <Box display="flex" gap="30px">
             <FormControl fullWidth variant="outlined" size="medium">
               <InputLabel>From</InputLabel>
-              <Select label="From" defaultValue="">
-                <MenuItem value="">Place Holder</MenuItem>
+              <Select label="From"
+              name="materialRequestFromLocation"
+              value={formValues.materialRequestFromLocation ? formValues.materialRequestFromLocation.rigName : ''} 
+              onChange={handleFromLocationChange}
+              >
+              
+              {eligibleRigs && eligibleRigs.map((eligibleRig, index) => (
+                  <MenuItem key={index} value={eligibleRig.rigName}>
+                    {eligibleRig.rigName}
+                  </MenuItem>
+              ))} 
                 
               </Select>
             </FormControl>
 
             <FormControl fullWidth variant="outlined" size="medium">
               <InputLabel>To</InputLabel>
-              <Select label="To" defaultValue="">
-                <MenuItem value="">Place Holder</MenuItem>
+              <Select label="To"
+              name="materialRequestToLocation"
+              value={formValues.materialRequestToLocation ? formValues.materialRequestToLocation.rigName : ''} 
+              onChange={handleToLocationChange}
+              >
+                {eligibleRigs && eligibleRigs.map((eligibleRig, index) => (
+                  <MenuItem key={index} value={eligibleRig.rigName}>
+                    {eligibleRig.rigName}
+                  </MenuItem>
+                ))}
                 
               </Select>
             </FormControl>
@@ -165,7 +273,7 @@ function MaterialRequestForm() {
             <TextField fullWidth label="Request Number" variant="outlined" size="medium" />
           </Box>
 
-          
+
           <Box display="flex" gap="30px">
             <TextField fullWidth label="Section" variant="outlined" size="medium" />
 
@@ -178,13 +286,13 @@ function MaterialRequestForm() {
               InputLabelProps={{
                 shrink: true, 
               }}
-              
+
             />
 
             <TextField fullWidth label="Requested By" variant="outlined" size="medium" />
           </Box>
 
-          
+
           <Box textAlign="center" marginTop="32px">
           <div>
           <label>
@@ -234,11 +342,10 @@ function MaterialRequestForm() {
             fontSize: '16px',
           }}
         >
-          Create Material Request
+          Submit Request
         </Button>
       </Box>
     </Container>
   );
 }
-
 export default MaterialRequestForm;

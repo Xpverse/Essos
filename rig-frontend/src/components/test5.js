@@ -1,21 +1,52 @@
-import React from 'react';
+import { React, useRef } from 'react';
 import { Container, Box, Typography, TextField, Button, Paper } from '@mui/material';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
-
-
+import { useDispatch } from 'react-redux';
+import { useNavigate } from 'react-router-dom';
+import axios from 'axios';
 const theme = createTheme({
   palette: {
     primary: {
-      main: '#00796B', 
+      main: '#00796B',
     },
   },
 });
 
 const LoginPage = () => {
-  const handleLogin = (event) => {
+  const dispatch = useDispatch();
+  const navigate = useNavigate()
+  const emailRef = useRef();
+  const passwordRef = useRef();
+
+  const handleLogin = async (event) => {
     event.preventDefault();
-    
-    alert('Login clicked!');
+
+    const loginBody = {
+      email: emailRef.current.value,
+      password: passwordRef.current.value,
+    };
+
+    try {
+      const response = await axios.post(
+        "http://localhost:8000/api/v1/login",
+        JSON.stringify(loginBody),
+        {
+          headers: { 'Content-Type': 'application/json' },
+          withCredentials: true,
+        }
+      );
+      console.log(JSON.stringify(response?.data));
+      const accessToken = response?.data;
+      console.log("AccessToken", accessToken);
+      
+      sessionStorage.setItem("accessToken",accessToken)
+      sessionStorage.setItem("email",loginBody.email)
+      navigate('/')
+      // dispatch(loginRequestFinalAction(loginBody));
+      alert('Login clicked!');
+    } catch (error) {
+      console.error('Error during login:', error);
+    }
   };
 
   return (
@@ -43,6 +74,7 @@ const LoginPage = () => {
                   fullWidth
                   label="Email Address"
                   autoComplete="email"
+                  inputRef={emailRef}
                   autoFocus
                   sx={{ borderRadius: 2 }}
                 />
@@ -53,6 +85,7 @@ const LoginPage = () => {
                   fullWidth
                   label="Password"
                   type="password"
+                  inputRef={passwordRef}
                   autoComplete="current-password"
                   sx={{ borderRadius: 2 }}
                 />
