@@ -1,15 +1,46 @@
-import React, { useState } from 'react';
+import React, { useState,useEffect } from 'react';
 import { Box, Button, Checkbox, Container, IconButton, MenuItem, Chip, Select, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Typography, Paper, Divider, Grid } from '@mui/material';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import BoltIcon from '@mui/icons-material/Bolt';
 import InsertDriveFileIcon from '@mui/icons-material/InsertDriveFile';
 import DownloadIcon from '@mui/icons-material/Download';
-
+import { useParams } from 'react-router-dom';
+import { useDispatch,useSelector } from 'react-redux';
+import { fetchCurrentVesselFinalAction } from '../redux/actions/vesselAction';
+import axios from 'axios';
 const VesselMaterialRequest = () => {
-  const [selectedVessel, setSelectedVessel] = useState('');
   const [selectedRows, setSelectedRows] = useState([]);
+  const [vesselJourneyStops, setVesselJourneyStops] = useState(null);
+  const { id } = useParams();
+  const dispatch = useDispatch();
+  useEffect(() => {
+    if(id){
+      dispatch(fetchCurrentVesselFinalAction(id))
+    }
+  
+  }, [dispatch,id]);
 
+  const currentVessel = useSelector((state)=> state.vesselReducer.currentVessel)
+  
+  useEffect(() => {
+    if (currentVessel?.currentVesselJourney?.vesselJourneyId) {
+      const vesselJourneyId = currentVessel.currentVesselJourney.vesselJourneyId;
+
+      
+      axios.post(`http://localhost:8000/api/v1/vessel-journey-stops/vessel-journey/${vesselJourneyId}`, {})
+        .then((response) => {
+          console.log('Axios request successful:', response.data);
+          setVesselJourneyStops(response.data);
+        })
+        .catch((error) => {
+          console.error('Axios request failed:', error);
+        });
+    }
+  }, [currentVessel]);
+
+  
+  
   const vessels = [
     "Vessel Name 1 (Capacity)",
     "Vessel Name 2 (Capacity)",
@@ -19,7 +50,7 @@ const VesselMaterialRequest = () => {
   ];
 
   const handleVesselChange = (event) => {
-    setSelectedVessel(event.target.value);
+    //setSelectedVessel(event.target.value);
   };
 
   const rows = [
@@ -118,22 +149,20 @@ const VesselMaterialRequest = () => {
               <Box display="flex" justifyContent="space-between" width="100%" mb={2}>
                 <Typography variant="body2" style={{ fontWeight: 'bold' }}>VESSEL BERTHING TIME</Typography>
                 <Box textAlign="right">
-                  <Typography variant="body1" color="primary">29 September 2024</Typography>
-                  <Typography variant="body1" color="primary">12:32 PM</Typography>
+                  <Typography variant="body1" color="primary">{currentVessel && currentVessel.currentVesselJourney.vesselJourneyBerthingOn}</Typography>
                 </Box>
               </Box>
 
               <Box display="flex" justifyContent="space-between" width="100%" mb={2}>
                 <Typography variant="body2" style={{ fontWeight: 'bold' }}>VESSEL SAILING TIME</Typography>
                 <Box textAlign="right">
-                  <Typography variant="body1" color="primary">29 September 2024</Typography>
-                  <Typography variant="body1" color="primary">12:32 PM</Typography>
+                <Typography variant="body1" color="primary">{currentVessel && currentVessel.currentVesselJourney.vesselJourneySailingOn}</Typography>
                 </Box>
               </Box>
 
               <Box display="flex" justifyContent="space-between" width="100%" mb={2}>
                 <Typography variant="body2" style={{ fontWeight: 'bold' }}>TOTAL WEIGHT IN TONS</Typography>
-                <Typography variant="body1" color="primary">344 Tons</Typography>
+                <Typography variant="body1" color="primary">{currentVessel && currentVessel.currentVesselJourney.vesselJourneyDeckCapacity}</Typography>
               </Box>
 
               <Box display="flex" justifyContent="space-between" width="100%">
