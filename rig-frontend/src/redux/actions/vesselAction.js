@@ -65,7 +65,7 @@ export const fetchCurrentVesselFinalAction = (id) => {
         axios.get(`http://localhost:8000/api/v1/vessels/${id}`)
             .then(response => {
                 const data = response.data
-                console.log(data)
+                console.log("Current vessel Data***",data)
                 dispatch(fetchCurrentVesselSuccess(data))
             })
             .catch(error => {
