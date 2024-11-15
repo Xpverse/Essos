@@ -28,7 +28,7 @@ const VesselMaterialRequest = () => {
       const vesselJourneyId = currentVessel.currentVesselJourney.vesselJourneyId;
 
       
-      axios.post(`http://localhost:8000/api/v1/vessel-journey-stops/vessel-journey/${vesselJourneyId}`, {})
+      axios.get(`http://localhost:8000/api/v1/vessel-journey-stops/vessel-journey/${vesselJourneyId}`, {})
         .then((response) => {
           console.log('Axios request successful:', response.data);
           setVesselJourneyStops(response.data);
@@ -149,7 +149,7 @@ const VesselMaterialRequest = () => {
               <Box display="flex" justifyContent="space-between" width="100%" mb={2}>
                 <Typography variant="body2" style={{ fontWeight: 'bold' }}>VESSEL BERTHING TIME</Typography>
                 <Box textAlign="right">
-                  <Typography variant="body1" color="primary">{currentVessel && currentVessel.currentVesselJourney.vesselJourneyBerthingOn}</Typography>
+                  <Typography variant="body1" color="primary">{currentVessel && currentVessel.currentVesselJourney && currentVessel.currentVesselJourney.vesselJourneyBerthingOn}</Typography>
                 </Box>
               </Box>
 
@@ -174,49 +174,22 @@ const VesselMaterialRequest = () => {
         </Grid>
         {/* Shipment Tracking Section */}
         <Grid item xs={12}>
-          <Typography variant="h6" gutterBottom>Shipment Tracking</Typography>
-          <Box display="flex" alignItems="center" justifyContent="center" mt={2}>
-            {/* First Checkpoint */}
+        <Typography variant="h6" gutterBottom>Shipment Tracking</Typography>
+        <Box display="flex" alignItems="center" justifyContent="center" mt={2}>
+          {vesselJourneyStops?.map((stop, index) => (
+          <React.Fragment key={index}>
             <Box textAlign="center">
               <CheckCircleIcon sx={{ color: '#008080' }} fontSize="large" />
-              <Typography variant="body2" style={{ color: '#6c757d', marginTop: '4px' }}>Base</Typography>
+              <Typography variant="body2" style={{ color: '#6c757d', marginTop: '4px' }}>{stop.rigName}</Typography>
             </Box>
-            <Divider flexItem orientation="horizontal" sx={{ width: '100px', marginTop: '16px', height: '2px', backgroundColor: '#008080', mx: 4 }} />
-
-            {/* Midpoint */}
-            <Box textAlign="center">
-              <CheckCircleIcon sx={{ color: '#008080' }} fontSize="large" />
-              <Typography variant="body2" style={{ color: '#6c757d', marginTop: '4px' }}>Rig_2</Typography>
-            </Box>
-            <Divider flexItem orientation="horizontal" sx={{ width: '100px', marginTop: '16px', height: '2px', backgroundColor: '#008080', mx: 4 }} />
-
-            {/* Last Checkpoint */}
-            <Box textAlign="center">
-              <CheckCircleIcon sx={{ color: '#008080' }} fontSize="large" />
-              <Typography variant="body2" style={{ color: '#6c757d', marginTop: '4px' }}>Base</Typography>
-            </Box>
-
-            {/* Current Status Indicator */}
-            <Box display="flex" alignItems="center" mt={5} ml={1}>
-              <Box
-                display="flex"
-                alignItems="center"
-                sx={{
-                  backgroundColor: '#333',
-                  color: '#fff',
-                  padding: '2px 4px',
-                  borderRadius: '10px',
-                  display: 'inline-flex',
-                }}
-              >
-                <BoltIcon sx={{ fontSize: '18px', color: '#fff', mr: 0 }} />
-                <Typography variant="body2" sx={{ fontWeight: 'bold', mr: 1 }}>
-                  Current
-                </Typography>
-              </Box>
-            </Box>
-          </Box>
+          {index < vesselJourneyStops.length - 1 && (
+            <Divider flexItem orientation="horizontal" sx={{ width: '100px', height: '2px', backgroundColor: '#008080', mx: 4 }} />
+          )}
+          </React.Fragment>
+        ))}
+        </Box>
         </Grid>
+
         <Box mt={4} mb={2} sx={{ display: 'flex', justifyContent: 'center' }}>
           <Divider
             sx={{
