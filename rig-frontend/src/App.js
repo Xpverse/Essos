@@ -111,7 +111,7 @@ function AppLayout() {
       </Drawer>
 
       {/* Main Content */}
-      <Box component="main" sx={{ flexGrow: 1, bgcolor: 'background.default', p: 3, ml: `${drawerWidth}px`, mt: '64px' }}>
+      <Box component="main" sx={{ flexGrow: 1, bgcolor: 'background.default', p: 3, ml: `0px`, mt: '64px' }}>
         <Routes>
           <Route path="/" element={<Homepage />} />
           <Route path="/updateMaterialRequests" element={<UpdateMaterialRequestForm />} />

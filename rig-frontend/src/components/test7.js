@@ -88,10 +88,8 @@ function UpdateMaterialRequestForm() {
   };
 
   return (
-    <Container maxWidth="lg" style={{ padding: '40px 0' }}>
-      <Typography variant="h4" gutterBottom style={{ fontWeight: 'bold', color: '#333', marginBottom: '30px' }}>
-        Update Material Request
-      </Typography>
+    <Container maxWidth="lg" style={{ padding: '10px 0' }}>
+      
 
       <Tabs
         value={requestType}
