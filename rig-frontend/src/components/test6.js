@@ -21,6 +21,7 @@ import {
   TableRow,
   Paper,
 } from "@mui/material";
+import { red } from "@mui/material/colors";
 
 const MaterialRequest2 = () => {
   const [statusFilter, setStatusFilter] = useState("Created");
@@ -270,7 +271,7 @@ const MaterialRequest2 = () => {
       <Box sx={{ mb: 2 }}>
         <Typography
           variant="subtitle1"
-          sx={{ color: "#008080", fontWeight: "bold", cursor: "pointer" }}
+          sx={{ fontWeight: "bold", cursor: "pointer" }}
         >
           Downloaded Tables
         </Typography>
@@ -279,8 +280,8 @@ const MaterialRequest2 = () => {
       
       <TableContainer component={Paper}>
         <Table sx={{ minWidth: 650 }} aria-label="material request table">
-          <TableHead backgroundColor="red">
-            <TableRow>
+          <TableHead >
+            <TableRow sx={{  backgroundColor: '#b2ece9' }}>
               <TableCell>Request Date</TableCell>
               <TableCell>Request Number</TableCell>
               <TableCell>Section</TableCell>
