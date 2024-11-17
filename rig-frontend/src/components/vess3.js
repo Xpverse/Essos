@@ -14,7 +14,7 @@ import {
 import { useDispatch, useSelector } from 'react-redux';
 import { fetchCurrentVesselFinalAction } from '../redux/actions/vesselAction';
 import { fetchRigRequestData } from '../redux/actions/rigAction';
-import { useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import axios from 'axios';
 
 const AddVesselJourney = () => {
@@ -22,7 +22,7 @@ const AddVesselJourney = () => {
   const [vesselJourneyStops, setVesselJourneyStops] = useState([]);
   const dispatch = useDispatch();
   const { id } = useParams();
-
+  const navigate = useNavigate()
   const rigs = useSelector((state) => state.rigReducer.rigs || []);
   const currentVessel = useSelector((state) => state.vesselReducer.currentVessel);
 
@@ -51,10 +51,11 @@ const AddVesselJourney = () => {
         .catch((error) => {
           console.error('Axios request failed:', error);
         });
-
+      
+      const startLocation = rigs.find((rig) => rig.rigName === currentVessel.currentVesselJourney.vesselJourneyStartLocation);
       setFormValues({
         ...formValues,
-        vesselJourneyStartLocation: currentVessel.vesselJourneyStartLocation,
+        vesselJourneyStartLocation: startLocation,
         vesselJourneyStops: vesselJourneyStops,
       });
     }
@@ -64,6 +65,7 @@ const AddVesselJourney = () => {
     const convertToDTO = (vesselJourneyStop, idx) => ({
       vesselJourneyStopLocationId: vesselJourneyStop.rigId,
       vesselJourneyStopOrder: idx + 1,
+      vesselJourneyId : parseInt(id)
     });
 
     const requestBody = vesselJourneyStops.map((vesselJourneyStop, idx) => convertToDTO(vesselJourneyStop, idx));
@@ -75,10 +77,15 @@ const AddVesselJourney = () => {
         console.log('Delete request successful:', response.data);
 
         axios
-          .post(`http://localhost:8000/api/v1/vessel-journey-stops/vessel-journey/bulk/${id}`)
+          .post(`http://localhost:8000/api/v1/vessel-journey-stops/batch`,JSON.stringify(requestBody),{
+            headers: {
+              'Content-Type': 'application/json',
+            }
+          })
           .then((response2) => {
             console.log('Bulk post request successful:', response2.data);
             alert('Both requests completed successfully!');
+            navigate('/vessels')
           })
           .catch((error2) => {
             console.error('Error in bulk post request:', error2);
