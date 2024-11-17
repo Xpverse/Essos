@@ -124,7 +124,7 @@ function AppLayout() {
           <Route path="/vessels" element={<VesselsTable/>} />
           <Route path="/vesselDetails/:id" element={<VesselMaterialRequest/>} />
           <Route path="/materialRequests" element={<MaterialRequest2/>} />
-          <Route path="/createOrEditVesselJourney" element={<AddVesselJourney/>}/>
+          <Route path="/createOrEditVesselJourney/:id" element={<AddVesselJourney/>}/>
         </Routes>
       </Box>
     </div>
