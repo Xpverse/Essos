@@ -1,10 +1,22 @@
 import React, { useState, useEffect } from 'react';
-import { Container, Typography, Button, TextField, Box, MenuItem, FormControl, Select, InputLabel, Divider } from '@mui/material';
+import {
+  Container,
+  Typography,
+  Button,
+  TextField,
+  Box,
+  MenuItem,
+  FormControl,
+  Select,
+  InputLabel,
+  Divider,
+} from '@mui/material';
 import { useDispatch, useSelector } from 'react-redux';
 import { fetchCurrentVesselFinalAction } from '../redux/actions/vesselAction';
 import { fetchRigRequestData } from '../redux/actions/rigAction';
 import { useParams } from 'react-router-dom';
 import axios from 'axios';
+
 const AddVesselJourney = () => {
   const [selectedLocation, setSelectedLocation] = useState('');
   const [vesselJourneyStops, setVesselJourneyStops] = useState([]);
@@ -16,22 +28,22 @@ const AddVesselJourney = () => {
 
   const [formValues, setFormValues] = useState({
     vesselJourneyStartLocation: {},
-    vesselJourneyStops: []
+    vesselJourneyStops: [],
   });
 
-  useEffect( () =>  {
+  useEffect(() => {
     if (id) {
       dispatch(fetchCurrentVesselFinalAction(id));
       dispatch(fetchRigRequestData());
     }
-  }, [dispatch, id])
+  }, [dispatch, id]);
 
-  useEffect( () => {
+  useEffect(() => {
     if (currentVessel?.currentVesselJourney?.vesselJourneyId) {
       const vesselJourneyId = currentVessel.currentVesselJourney.vesselJourneyId;
 
-      
-      axios.get(`http://localhost:8000/api/v1/vessel-journey-stops/vessel-journey/${vesselJourneyId}`, {})
+      axios
+        .get(`http://localhost:8000/api/v1/vessel-journey-stops/vessel-journey/${vesselJourneyId}`)
         .then((response) => {
           console.log('Axios request successful:', response.data);
           setVesselJourneyStops(response.data);
@@ -40,21 +52,50 @@ const AddVesselJourney = () => {
           console.error('Axios request failed:', error);
         });
 
-         setFormValues({
-          ...formValues,
-          vesselJourneyStartLocation:currentVessel.vesselJourneyStartLocation,
-          vesselJourneyStops:vesselJourneyStops
-        })
+      setFormValues({
+        ...formValues,
+        vesselJourneyStartLocation: currentVessel.vesselJourneyStartLocation,
+        vesselJourneyStops: vesselJourneyStops,
+      });
     }
   }, [currentVessel]);
 
   const handleSubmit = () => {
-    
-  }
+    const convertToDTO = (vesselJourneyStop, idx) => ({
+      vesselJourneyStopLocationId: vesselJourneyStop.rigId,
+      vesselJourneyStopOrder: idx + 1,
+    });
+
+    const requestBody = vesselJourneyStops.map((vesselJourneyStop, idx) => convertToDTO(vesselJourneyStop, idx));
+    console.log(requestBody);
+
+    axios
+      .delete(`http://localhost:8000/api/v1/vessel-journey-stops/vessel-journey/${id}`)
+      .then((response) => {
+        console.log('Delete request successful:', response.data);
+
+        axios
+          .post(`http://localhost:8000/api/v1/vessel-journey-stops/vessel-journey/bulk/${id}`)
+          .then((response2) => {
+            console.log('Bulk post request successful:', response2.data);
+            alert('Both requests completed successfully!');
+          })
+          .catch((error2) => {
+            console.error('Error in bulk post request:', error2);
+            alert('Error occurred in the second request.');
+          });
+      })
+      .catch((error) => {
+        console.error('Error in delete request:', error);
+        alert('Error occurred in the first request.');
+      });
+  };
+
   const handleSelectedLocationChange = (event) => {
     const selectedLocationTemp = rigs.find((rig) => rig.rigName === event.target.value);
-    setSelectedLocation(selectedLocationTemp)
-  }
+    setSelectedLocation(selectedLocationTemp);
+  };
+
   const handleStartLocationChange = (event) => {
     const selectedStartLocation = rigs.find((rig) => rig.rigName === event.target.value);
     setFormValues({
@@ -86,17 +127,19 @@ const AddVesselJourney = () => {
     <Container maxWidth="md" style={{ padding: '20px' }}>
       <Box display="flex" justifyContent="space-between" alignItems="center" mb={2}>
         <Typography variant="h6">Add Vessel Journey</Typography>
-        <Button variant="contained"
-           style={{ backgroundColor: '#00796B' }}
-           onClick={handleSubmit}
-           >Save Journey</Button>
+        <Button
+          variant="contained"
+          style={{ backgroundColor: '#00796B' }}
+          onClick={handleSubmit}
+        >
+          Save Journey
+        </Button>
       </Box>
 
       <Typography variant="h5" gutterBottom>
         Enter Journey Details for Vessel <strong style={{ color: '#00796B' }}>{id}</strong>
       </Typography>
 
-      {/* Start Location Selection */}
       <Box display="flex" gap={2} mb={3}>
         <FormControl fullWidth>
           <InputLabel>Starts From</InputLabel>
@@ -113,6 +156,7 @@ const AddVesselJourney = () => {
             ))}
           </Select>
         </FormControl>
+
         <TextField
           fullWidth
           label="Berthing Time"
@@ -120,6 +164,7 @@ const AddVesselJourney = () => {
           InputLabelProps={{ shrink: true }}
           variant="outlined"
         />
+
         <TextField
           fullWidth
           label="Sailing Time"
@@ -135,7 +180,6 @@ const AddVesselJourney = () => {
 
       <Divider />
 
-      {/* Add Stop UI */}
       <Box display="flex" alignItems="center" gap={2} mt={2}>
         <FormControl fullWidth>
           <InputLabel>Select Rig / Location for Stop</InputLabel>
@@ -167,7 +211,6 @@ const AddVesselJourney = () => {
         </Button>
       </Box>
 
-      {/* Display List of Stops */}
       <Box mt={3}>
         {formValues.vesselJourneyStops.map((stop, index) => (
           <Box key={index} display="flex" alignItems="center" justifyContent="space-between" mb={1}>
