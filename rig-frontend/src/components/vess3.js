@@ -131,8 +131,8 @@ const AddVesselJourney = () => {
   };
 
   return (
-    <Container maxWidth="md" style={{ padding: '20px' }}>
-      <Box display="flex" justifyContent="space-between" alignItems="center" mb={2}>
+    <Container maxWidth="md" style={{ padding: '0px' }}>
+      <Box display="flex" justifyContent="space-between"  mb={2}>
         <Typography variant="h6">Add Vessel Journey</Typography>
         <Button
           variant="contained"

@@ -35,17 +35,6 @@ function MaterialRequestSummary() {
   return (
     <Container maxWidth="lg" sx={{ paddingTop: 4 }}>
      
-      <Typography
-        variant="h4"
-        sx={{
-          fontWeight: 700,
-          color: '#1e293b', 
-          marginBottom: 4,
-        }}
-      >
-        Material Requests
-      </Typography>
-
       
       <Paper
         elevation={4}
