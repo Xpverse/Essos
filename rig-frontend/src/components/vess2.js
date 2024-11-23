@@ -9,6 +9,7 @@ import { useParams } from 'react-router-dom';
 import { useDispatch,useSelector } from 'react-redux';
 import { fetchCurrentVesselFinalAction } from '../redux/actions/vesselAction';
 import axios from 'axios';
+import { format } from 'date-fns';
 const VesselMaterialRequest = () => {
   const [selectedRows, setSelectedRows] = useState([]);
   const [vesselJourneyStops, setVesselJourneyStops] = useState(null);
@@ -149,14 +150,14 @@ const VesselMaterialRequest = () => {
               <Box display="flex" justifyContent="space-between" width="100%" mb={2}>
                 <Typography variant="body2" style={{ fontWeight: 'bold' }}>VESSEL BERTHING TIME</Typography>
                 <Box textAlign="right">
-                  <Typography variant="body1" color="primary">{currentVessel && currentVessel.currentVesselJourney && currentVessel.currentVesselJourney.vesselJourneyBerthingOn}</Typography>
+                  <Typography variant="body1" color="primary">{currentVessel && currentVessel.currentVesselJourney && currentVessel.currentVesselJourney.vesselJourneyBerthingOn ? format(new Date(currentVessel.currentVesselJourney.vesselJourneyBerthingOn), 'yyyy-MM-dd HH:mm:ss') :'N/A'}</Typography>
                 </Box>
               </Box>
 
               <Box display="flex" justifyContent="space-between" width="100%" mb={2}>
                 <Typography variant="body2" style={{ fontWeight: 'bold' }}>VESSEL SAILING TIME</Typography>
                 <Box textAlign="right">
-                <Typography variant="body1" color="primary">{currentVessel && currentVessel.currentVesselJourney.vesselJourneySailingOn}</Typography>
+                <Typography variant="body1" color="primary">{currentVessel && currentVessel.currentVesselJourney && currentVessel.currentVesselJourney.vesselJourneySailingOn ? format(new Date(currentVessel.currentVesselJourney.vesselJourneySailingOn),'yyyy-MM-dd HH:mm:ss'):'N/A'}</Typography>
                 </Box>
               </Box>
 
