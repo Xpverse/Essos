@@ -23,7 +23,7 @@ function MaterialRequestForm() {
     materialRequestSupplier:{},
     materialRequestFromLocation:{},
     materialRequestToLocation:{},
-    materialRequestType:''
+    materialRequestType:'MATERIAL_REQUEST'
   });
 
   const eligibleRigs = rigWellMaps.map(rigWellMap => 
@@ -77,26 +77,16 @@ function MaterialRequestForm() {
 
 
   const handleTabChange = (event, newValue) => {
-    let requestTypeValue;
-    switch (newValue) {
-      case 0:
-        requestTypeValue = 'MATERIAL_REQUEST';
-        break;
-      case 1:
-        requestTypeValue = 'TRANSFER_REQUEST';
-        break;
-      case 2:
-        requestTypeValue = 'BACKLOAD_REQUEST';
-        break;
-      default:
-      requestTypeValue = '';
-    }
-
-    setFormValues({
-      ...formValues,
+    setRequestType(newValue); // Update the currently selected tab index
+  
+    const requestTypeValue = ['MATERIAL_REQUEST', 'TRANSFER_REQUEST', 'BACKLOAD_REQUEST'][newValue];
+  
+    setFormValues((prevValues) => ({
+      ...prevValues,
       materialRequestType: requestTypeValue,
-    });
+    }));
   };
+  
 
   useEffect(() => {
 
