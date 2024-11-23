@@ -13,11 +13,14 @@ import { format } from 'date-fns';
 const VesselMaterialRequest = () => {
   const [selectedRows, setSelectedRows] = useState([]);
   const [vesselJourneyStops, setVesselJourneyStops] = useState(null);
+  const [materialRequests,setMaterialRequests]=useState([])
   const { id } = useParams();
   const dispatch = useDispatch();
   useEffect(() => {
     if(id){
       dispatch(fetchCurrentVesselFinalAction(id))
+
+
     }
   
   }, [dispatch,id]);
@@ -25,6 +28,7 @@ const VesselMaterialRequest = () => {
   const currentVessel = useSelector((state)=> state.vesselReducer.currentVessel)
   
   useEffect(() => {
+    const vesselId = currentVessel.vesselId
     if (currentVessel?.currentVesselJourney?.vesselJourneyId) {
       const vesselJourneyId = currentVessel.currentVesselJourney.vesselJourneyId;
 
@@ -37,7 +41,18 @@ const VesselMaterialRequest = () => {
         .catch((error) => {
           console.error('Axios request failed:', error);
         });
+
+        axios.get(`http://localhost:8000/api/v1/material-requests/vessel/${vesselId}`, {})
+        .then((response) => {
+          console.log('Axios request successful:', response.data);
+          setMaterialRequests(response.data);
+        })
+        .catch((error) => {
+          console.error('Axios request failed:', error);
+        });
     }
+
+    
   }, [currentVessel]);
 
   
@@ -115,7 +130,7 @@ const VesselMaterialRequest = () => {
       <Table sx={{ minWidth: 300}} aria-label="simple table">
        
         <TableBody>
-          {list.map((row,index) => (
+          {materialRequests.map((row,index) => (
             <TableRow
               key={index}
               sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
@@ -123,7 +138,7 @@ const VesselMaterialRequest = () => {
               <TableCell component="th" scope="row">
                 {index+1}
               </TableCell>
-              <TableCell align="right">{row.col1}</TableCell>
+              <TableCell align="right">{row.materialRequestName}</TableCell>
               
               <TableCell align="right"><Chip label={row.col2} variant="outlined" color="warning" /></TableCell>
               <TableCell align="right"><Chip label={row.col3} variant="outlined" color="primary" /></TableCell>
