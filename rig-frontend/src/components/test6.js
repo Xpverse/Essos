@@ -73,6 +73,7 @@ const MaterialRequest2 = () => {
    materialRequest.materialRequestToLocation.locationName,
    materialRequest.materialRequestVessel.vesselName,
    materialRequest.materialRequestSupplier.supplierName,
+   "sample remark",
    1,
    10,
    materialRequest.materialRequestRemarks,
@@ -323,9 +324,9 @@ const MaterialRequest2 = () => {
                 <TableCell>{row.numberOfLifts}</TableCell>
                 <TableCell>{row.weightInTons}</TableCell>
                 <TableCell
-                  sx={{ color: row.currentStatus === "Loaded" ? "red" : "black" }}
+                  sx={{ color: row.status === "Loaded" ? "red" : "black" }}
                 >
-                  {row.currentStatus}
+                  {row.status}
                 </TableCell>
               </TableRow>
             ))}
