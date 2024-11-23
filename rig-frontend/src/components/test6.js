@@ -24,7 +24,7 @@ import {
 import { red } from "@mui/material/colors";
 
 const MaterialRequest2 = () => {
-  const [statusFilter, setStatusFilter] = useState("Created");
+  const [statusFilter, setStatusFilter] = useState("");
 
   const handleStatusChange = (status) => {
     setStatusFilter(status);
@@ -256,6 +256,7 @@ const MaterialRequest2 = () => {
       <Box sx={{ display: "flex", justifyContent: "flex-end" }}>
         <Button
           variant="text"
+          onClick={() => handleStatusChange("")}
           sx={{
             textTransform: "none",
             color: "#008080",

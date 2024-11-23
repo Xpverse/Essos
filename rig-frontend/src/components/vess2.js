@@ -89,7 +89,11 @@ const VesselMaterialRequest = () => {
   };
 
   const isSelected = (srNo) => selectedRows.indexOf(srNo) !== -1;
-
+  const list = [
+    {col1:' mr_20240925105600',col2:'43 Lifts',col3:'Rig_2'},
+    {col1:' mr_20240925105600',col2:'43 Lifts',col3:'Rig_2'},
+    {col1:' mr_20240925105600',col2:'43 Lifts',col3:'Rig_2'},
+    ];
   return (
     <Container >
       {/* Navigation */}
@@ -104,16 +108,32 @@ const VesselMaterialRequest = () => {
       <Grid container spacing={4}>
         {/* Material Requests */}
         <Grid item xs={4}>
-          <Typography variant="subtitle1">1. Material Requests</Typography>
-          <Paper elevation={3} style={{ padding: '16px', borderRadius: '8px' }}>
-            <Box display="flex" alignItems="center" justifyContent="space-between">
-              <Typography variant="body1">1. mr_20240925105600</Typography>
-              <Box display="flex" gap={1}>
-                <Chip label="43 Lifts" variant="outlined" color="warning" />
-                <Chip label="Rig_2" variant="outlined" color="primary" />
-              </Box>
-            </Box>
-          </Paper>
+          <Typography variant="subtitle1"> Material Requests</Typography>
+         
+
+            <TableContainer component={Paper}>
+      <Table sx={{ minWidth: 300}} aria-label="simple table">
+       
+        <TableBody>
+          {list.map((row,index) => (
+            <TableRow
+              key={index}
+              sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
+            >
+              <TableCell component="th" scope="row">
+                {index+1}
+              </TableCell>
+              <TableCell align="right">{row.col1}</TableCell>
+              
+              <TableCell align="right"><Chip label={row.col2} variant="outlined" color="warning" /></TableCell>
+              <TableCell align="right"><Chip label={row.col3} variant="outlined" color="primary" /></TableCell>
+             
+            </TableRow>
+          ))}
+        </TableBody>
+      </Table>
+    </TableContainer>
+         
         </Grid>
 
         {/* Bulk Occupied Section */}
@@ -146,6 +166,9 @@ const VesselMaterialRequest = () => {
         <Grid item xs={4}>
           <Typography variant="subtitle1">Details</Typography>
           <Paper elevation={3} style={{ padding: '16px', borderRadius: '8px' }}>
+          <TableContainer component={Paper} style={{ marginTop: 16 }}>
+           
+           
             <Box display="flex" flexDirection="column" alignItems="flex-end" justifyContent="space-between">
               <Box display="flex" justifyContent="space-between" width="100%" mb={2}>
                 <Typography variant="body2" style={{ fontWeight: 'bold' }}>VESSEL BERTHING TIME</Typography>
@@ -154,6 +177,7 @@ const VesselMaterialRequest = () => {
                 </Box>
               </Box>
 
+            
               <Box display="flex" justifyContent="space-between" width="100%" mb={2}>
                 <Typography variant="body2" style={{ fontWeight: 'bold' }}>VESSEL SAILING TIME</Typography>
                 <Box textAlign="right">
@@ -161,16 +185,19 @@ const VesselMaterialRequest = () => {
                 </Box>
               </Box>
 
+             
               <Box display="flex" justifyContent="space-between" width="100%" mb={2}>
                 <Typography variant="body2" style={{ fontWeight: 'bold' }}>TOTAL WEIGHT IN TONS</Typography>
                 <Typography variant="body1" color="primary">{currentVessel && currentVessel.currentVesselJourney.vesselJourneyDeckCapacity}</Typography>
               </Box>
 
+            
               <Box display="flex" justifyContent="space-between" width="100%">
                 <Typography variant="body2" style={{ fontWeight: 'bold' }}>NO. OF LIFTS</Typography>
                 <Typography variant="body1" color="primary">43 Lifts</Typography>
               </Box>
             </Box>
+            </TableContainer>
           </Paper>
         </Grid>
         {/* Shipment Tracking Section */}
@@ -272,11 +299,7 @@ const VesselMaterialRequest = () => {
         </Table>
       </TableContainer>
 
-      <Box display="flex" justifyContent="flex-end" mt={1}>
-        <Typography variant="body2" color="textSecondary">
-          Logged in as <strong>System Admin</strong>
-        </Typography>
-      </Box>
+     
     </Container>
   );
 };
