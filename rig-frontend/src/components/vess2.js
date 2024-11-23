@@ -108,9 +108,6 @@ const VesselMaterialRequest = () => {
     {col1:' mr_20240925105600',col2:'43 Lifts',col3:'Rig_2'},
     {col1:' mr_20240925105600',col2:'43 Lifts',col3:'Rig_2'},
     {col1:' mr_20240925105600',col2:'43 Lifts',col3:'Rig_2'},
-    {col1:' mr_20240925105600',col2:'43 Lifts',col3:'Rig_2'},
-    {col1:' mr_20240925105600',col2:'43 Lifts',col3:'Rig_2'},
-    {col1:' mr_20240925105600',col2:'43 Lifts',col3:'Rig_2'},
     ];
   return (
     <Container >
@@ -133,7 +130,7 @@ const VesselMaterialRequest = () => {
       <Table sx={{ minWidth: 300}} aria-label="simple table">
        
         <TableBody>
-          {list.map((row,index) => (
+          {materialRequests.map((row,index) => (
             <TableRow
               key={index}
               sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
