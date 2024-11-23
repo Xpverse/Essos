@@ -1,34 +1,28 @@
 import React from 'react';
 import { Grid, Card, CardContent, Typography, Box } from '@mui/material';
 import { useState, useEffect } from 'react';
-
+import { useDispatch,useSelector } from 'react-redux';
+import { fetchMaterialRequestData } from '../../redux/actions/materialRequestsAction';
 const Homepage = () => {
-
+  const dispatch = useDispatch()
+  const materialRequests = useSelector((state) => state.materialRequestReducer.materialRequests)
   const [materialRequestsReceived, setMaterialRequestsReceived] = useState(0);
   const [materialRequestsLoaded, setMaterialRequestsLoaded] = useState(0);
   const [backloadsReceived, setBackloadsReceived] = useState(0);
 
-  // Fetch data on component load
   useEffect(() => {
-    fetchData();
-  }, []);
+    dispatch(fetchMaterialRequestData())
+    console.log(materialRequests)
+    const receivedCount = materialRequests.filter(req => req.materialRequestStatus == 'REQUESTED').length;
+    const loadedCount = materialRequests.filter(req => req.materialRequestStatus == 'LOADED').length;
+    const backloadCount = materialRequests.filter(req => req.materialRequestStatus == 'BACKLOADED').length;
+    
+    setMaterialRequestsReceived(receivedCount);
+    setMaterialRequestsLoaded(loadedCount);
+    setBackloadsReceived(backloadCount);
 
-  const fetchData = async () => {
-    try {
-      const response = await fetch('http://localhost:8000/api/v1/material-requests'); // Update with your API endpoint
-      const data = await response.json();
-      // Process and update state
-      const receivedCount = data.filter(req => req.materialRequestStatus === 'REQUESTED').length;
-      const loadedCount = data.filter(req => req.materialRequestStatus === 'LOADED').length;
-      const backloadCount = data.filter(req => req.materialRequestStatus === 'BACKLOADED').length;
+  }, [dispatch]);
 
-      setMaterialRequestsReceived(receivedCount);
-      setMaterialRequestsLoaded(loadedCount);
-      setBackloadsReceived(backloadCount);
-    } catch (error) {
-      console.error('Failed to fetch data:', error);
-    }
-  };
   return (
     <Box sx={{ padding: 4 }}>
       <Card sx={{ backgroundColor: '#A0522D', color: 'white', marginBottom: 3 }}>
