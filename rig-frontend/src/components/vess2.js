@@ -28,9 +28,9 @@ const VesselMaterialRequest = () => {
   const currentVessel = useSelector((state)=> state.vesselReducer.currentVessel)
   
   useEffect(() => {
-    const vesselId = currentVessel.vesselId
+    const vesselId = currentVessel?.vesselId
     if (currentVessel?.currentVesselJourney?.vesselJourneyId) {
-      const vesselJourneyId = currentVessel.currentVesselJourney.vesselJourneyId;
+      const vesselJourneyId = currentVessel.currentVesselJourney?.vesselJourneyId;
 
       
       axios.get(`http://localhost:8000/api/v1/vessel-journey-stops/vessel-journey/${vesselJourneyId}`, {})
@@ -108,6 +108,9 @@ const VesselMaterialRequest = () => {
     {col1:' mr_20240925105600',col2:'43 Lifts',col3:'Rig_2'},
     {col1:' mr_20240925105600',col2:'43 Lifts',col3:'Rig_2'},
     {col1:' mr_20240925105600',col2:'43 Lifts',col3:'Rig_2'},
+    {col1:' mr_20240925105600',col2:'43 Lifts',col3:'Rig_2'},
+    {col1:' mr_20240925105600',col2:'43 Lifts',col3:'Rig_2'},
+    {col1:' mr_20240925105600',col2:'43 Lifts',col3:'Rig_2'},
     ];
   return (
     <Container >
@@ -126,11 +129,11 @@ const VesselMaterialRequest = () => {
           <Typography variant="subtitle1"> Material Requests</Typography>
          
 
-            <TableContainer component={Paper}>
+            <TableContainer component={Paper} sx={{maxHeight:200}}>
       <Table sx={{ minWidth: 300}} aria-label="simple table">
        
         <TableBody>
-          {materialRequests.map((row,index) => (
+          {list.map((row,index) => (
             <TableRow
               key={index}
               sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
@@ -181,8 +184,7 @@ const VesselMaterialRequest = () => {
         <Grid item xs={4}>
           <Typography variant="subtitle1">Details</Typography>
           <Paper elevation={3} style={{ padding: '16px', borderRadius: '8px' }}>
-          <TableContainer component={Paper} style={{ marginTop: 16 }}>
-           
+        
            
             <Box display="flex" flexDirection="column" alignItems="flex-end" justifyContent="space-between">
               <Box display="flex" justifyContent="space-between" width="100%" mb={2}>
@@ -212,7 +214,7 @@ const VesselMaterialRequest = () => {
                 <Typography variant="body1" color="primary">43 Lifts</Typography>
               </Box>
             </Box>
-            </TableContainer>
+           
           </Paper>
         </Grid>
         {/* Shipment Tracking Section */}
