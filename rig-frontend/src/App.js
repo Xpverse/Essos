@@ -114,7 +114,7 @@ function AppLayout() {
       <Box component="main" sx={{ flexGrow: 1, bgcolor: 'background.default', p: 3, ml: `0px`, mt: '64px' }}>
         <Routes>
           <Route path="/" element={<Homepage />} />
-          <Route path="/updateMaterialRequests" element={<UpdateMaterialRequestForm />} />
+          <Route path="/updateMaterialRequest/:id" element={<UpdateMaterialRequestForm />} />
           <Route path="/createMaterialRequest" element={<MaterialRequestForm />} />
           <Route path="/materialRequestSummary/:id" element={<MaterialRequestSummary />} />
           <Route path="/test4" element={<BeautifulTable />} />
