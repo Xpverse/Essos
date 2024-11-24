@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect ,useState} from 'react';
 import { Container, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Typography, Paper, IconButton, Box } from '@mui/material';
 import VisibilityIcon from '@mui/icons-material/Visibility';
 import AddIcon from '@mui/icons-material/Add';
@@ -7,15 +7,48 @@ import StopIcon from '@mui/icons-material/Stop';
 import { useDispatch, useSelector } from 'react-redux';
 import { fetchVesselRequestData } from '../redux/actions/vesselAction';
 import { useNavigate } from 'react-router-dom';
-
+import axios from 'axios';
 const VesselsTable = () => {
   const dispatch = useDispatch();
+  const vessels = useSelector((state) => state.vesselReducer.vessels);
+  const [vesselResponses, setVesselResponses] = useState({});
+
   useEffect(() => {
     dispatch(fetchVesselRequestData());
   }, [dispatch]);
 
+  useEffect(() =>{
+    const fetchVesselData = async () => {
+      if (vessels && vessels.length > 0) {
+        try {
+          
+          const requests = vessels.map((vessel) =>
+            axios.get(`http://localhost:8000/api/v1/vessels/${parseInt(vessel.vesselId)}/journey-order`).then((response) => ({
+              vesselId: vessel.vesselId,
+              data: response.data,
+            }))
+          );
+
+          const results = await Promise.all(requests);
+          console.log("Resultsss***",results)
+         
+          const responsesDict = results.reduce((acc, result) => {
+            acc[result.vesselId] = result.data; 
+            return acc;
+          }, {});
+
+          setVesselResponses(responsesDict); 
+        } catch (error) {
+          console.error("Error fetching vessel data:", error);
+        }
+      }
+    };
+
+
+    fetchVesselData();
+  },[vessels])
   const navigate = useNavigate();
-  const vessels = useSelector((state) => state.vesselReducer.vessels);
+  
 
   const createData = (vesselId, vesselName, vesselDeckCapacity, vesselFuelCapacity, vesselStatus, vesselLocation, vesselCreate, vesselStart) => {
     return { vesselId, vesselName, vesselDeckCapacity, vesselFuelCapacity, vesselStatus, vesselLocation, vesselCreate, vesselStart };
@@ -78,7 +111,7 @@ const VesselsTable = () => {
                   <TableCell>{record.vesselFuelCapacity}</TableCell>
                   <TableCell>{record.vesselDeckCapacity}</TableCell>
                   <TableCell>{record.vesselStatus}</TableCell>
-                  <TableCell>{record.vesselLocation}</TableCell>
+                  <TableCell>{vesselResponses[record.vesselId]}</TableCell>
                   <TableCell>{record.designation}</TableCell>
                   <TableCell>
                     <IconButton 
