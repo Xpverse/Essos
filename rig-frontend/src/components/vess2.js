@@ -9,14 +9,18 @@ import { useParams } from 'react-router-dom';
 import { useDispatch,useSelector } from 'react-redux';
 import { fetchCurrentVesselFinalAction } from '../redux/actions/vesselAction';
 import axios from 'axios';
+import { format } from 'date-fns';
 const VesselMaterialRequest = () => {
   const [selectedRows, setSelectedRows] = useState([]);
   const [vesselJourneyStops, setVesselJourneyStops] = useState(null);
+  const [materialRequests,setMaterialRequests]=useState([])
   const { id } = useParams();
   const dispatch = useDispatch();
   useEffect(() => {
     if(id){
       dispatch(fetchCurrentVesselFinalAction(id))
+
+
     }
   
   }, [dispatch,id]);
@@ -24,8 +28,9 @@ const VesselMaterialRequest = () => {
   const currentVessel = useSelector((state)=> state.vesselReducer.currentVessel)
   
   useEffect(() => {
+    const vesselId = currentVessel?.vesselId
     if (currentVessel?.currentVesselJourney?.vesselJourneyId) {
-      const vesselJourneyId = currentVessel.currentVesselJourney.vesselJourneyId;
+      const vesselJourneyId = currentVessel.currentVesselJourney?.vesselJourneyId;
 
       
       axios.get(`http://localhost:8000/api/v1/vessel-journey-stops/vessel-journey/${vesselJourneyId}`, {})
@@ -36,7 +41,18 @@ const VesselMaterialRequest = () => {
         .catch((error) => {
           console.error('Axios request failed:', error);
         });
+
+        axios.get(`http://localhost:8000/api/v1/material-requests/vessel/${vesselId}`, {})
+        .then((response) => {
+          console.log('Axios request successful:', response.data);
+          setMaterialRequests(response.data);
+        })
+        .catch((error) => {
+          console.error('Axios request failed:', error);
+        });
     }
+
+    
   }, [currentVessel]);
 
   
@@ -88,7 +104,11 @@ const VesselMaterialRequest = () => {
   };
 
   const isSelected = (srNo) => selectedRows.indexOf(srNo) !== -1;
-
+  const list = [
+    {col1:' mr_20240925105600',col2:'43 Lifts',col3:'Rig_2'},
+    {col1:' mr_20240925105600',col2:'43 Lifts',col3:'Rig_2'},
+    {col1:' mr_20240925105600',col2:'43 Lifts',col3:'Rig_2'},
+    ];
   return (
     <Container >
       {/* Navigation */}
@@ -103,16 +123,32 @@ const VesselMaterialRequest = () => {
       <Grid container spacing={4}>
         {/* Material Requests */}
         <Grid item xs={4}>
-          <Typography variant="subtitle1">1. Material Requests</Typography>
-          <Paper elevation={3} style={{ padding: '16px', borderRadius: '8px' }}>
-            <Box display="flex" alignItems="center" justifyContent="space-between">
-              <Typography variant="body1">1. mr_20240925105600</Typography>
-              <Box display="flex" gap={1}>
-                <Chip label="43 Lifts" variant="outlined" color="warning" />
-                <Chip label="Rig_2" variant="outlined" color="primary" />
-              </Box>
-            </Box>
-          </Paper>
+          <Typography variant="subtitle1"> Material Requests</Typography>
+         
+
+            <TableContainer component={Paper} sx={{maxHeight:200}}>
+      <Table sx={{ minWidth: 300}} aria-label="simple table">
+       
+        <TableBody>
+          {materialRequests.map((row,index) => (
+            <TableRow
+              key={index}
+              sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
+            >
+              <TableCell component="th" scope="row">
+                {index+1}
+              </TableCell>
+              <TableCell align="right">{row.materialRequestName}</TableCell>
+              
+              <TableCell align="right"><Chip label={row.col2} variant="outlined" color="warning" /></TableCell>
+              <TableCell align="right"><Chip label={row.col3} variant="outlined" color="primary" /></TableCell>
+             
+            </TableRow>
+          ))}
+        </TableBody>
+      </Table>
+    </TableContainer>
+         
         </Grid>
 
         {/* Bulk Occupied Section */}
@@ -145,31 +181,37 @@ const VesselMaterialRequest = () => {
         <Grid item xs={4}>
           <Typography variant="subtitle1">Details</Typography>
           <Paper elevation={3} style={{ padding: '16px', borderRadius: '8px' }}>
+        
+           
             <Box display="flex" flexDirection="column" alignItems="flex-end" justifyContent="space-between">
               <Box display="flex" justifyContent="space-between" width="100%" mb={2}>
                 <Typography variant="body2" style={{ fontWeight: 'bold' }}>VESSEL BERTHING TIME</Typography>
                 <Box textAlign="right">
-                  <Typography variant="body1" color="primary">{currentVessel && currentVessel.currentVesselJourney && currentVessel.currentVesselJourney.vesselJourneyBerthingOn}</Typography>
+                  <Typography variant="body1" color="primary">{currentVessel && currentVessel.currentVesselJourney && currentVessel.currentVesselJourney.vesselJourneyBerthingOn ? format(new Date(currentVessel.currentVesselJourney.vesselJourneyBerthingOn), 'yyyy-MM-dd HH:mm:ss') :'N/A'}</Typography>
                 </Box>
               </Box>
 
+            
               <Box display="flex" justifyContent="space-between" width="100%" mb={2}>
                 <Typography variant="body2" style={{ fontWeight: 'bold' }}>VESSEL SAILING TIME</Typography>
                 <Box textAlign="right">
-                <Typography variant="body1" color="primary">{currentVessel && currentVessel.currentVesselJourney.vesselJourneySailingOn}</Typography>
+                <Typography variant="body1" color="primary">{currentVessel && currentVessel.currentVesselJourney && currentVessel.currentVesselJourney.vesselJourneySailingOn ? format(new Date(currentVessel.currentVesselJourney.vesselJourneySailingOn),'yyyy-MM-dd HH:mm:ss'):'N/A'}</Typography>
                 </Box>
               </Box>
 
+             
               <Box display="flex" justifyContent="space-between" width="100%" mb={2}>
                 <Typography variant="body2" style={{ fontWeight: 'bold' }}>TOTAL WEIGHT IN TONS</Typography>
                 <Typography variant="body1" color="primary">{currentVessel && currentVessel.currentVesselJourney.vesselJourneyDeckCapacity}</Typography>
               </Box>
 
+            
               <Box display="flex" justifyContent="space-between" width="100%">
                 <Typography variant="body2" style={{ fontWeight: 'bold' }}>NO. OF LIFTS</Typography>
                 <Typography variant="body1" color="primary">43 Lifts</Typography>
               </Box>
             </Box>
+           
           </Paper>
         </Grid>
         {/* Shipment Tracking Section */}
@@ -271,11 +313,7 @@ const VesselMaterialRequest = () => {
         </Table>
       </TableContainer>
 
-      <Box display="flex" justifyContent="flex-end" mt={1}>
-        <Typography variant="body2" color="textSecondary">
-          Logged in as <strong>System Admin</strong>
-        </Typography>
-      </Box>
+     
     </Container>
   );
 };

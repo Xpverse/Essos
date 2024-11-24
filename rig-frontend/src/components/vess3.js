@@ -10,6 +10,12 @@ import {
   Select,
   InputLabel,
   Divider,
+  TableContainer,
+  Table,
+  TableBody,
+  TableRow,
+  TableCell,
+  Paper,
 } from '@mui/material';
 import { useDispatch, useSelector } from 'react-redux';
 import { fetchCurrentVesselFinalAction } from '../redux/actions/vesselAction';
@@ -158,10 +164,15 @@ const AddVesselJourney = () => {
       vesselJourneyStops: newStops,
     });
   };
-
+ const listitem = ["random text blah blah blah blah",
+  "random text blah blah blah blah","random text blah blah blah blah",
+  "random text blah blah blah blah","random text blah blah blah blah",
+  "random text blah blah blah blah", "random text blah blah blah blah"
+ ];
   return (
+    <Container maxWidth="md">
     <Container maxWidth="md" style={{ padding: '0px' }}>
-      <Box display="flex" flexDirection="row-reverse" justifyContent="space-between" mb={2}>
+      <Box display="flex" flexDirection='row-reverse' justifyContent="space-between"  mb={2}>
         <Button
           variant="contained"
           style={{ backgroundColor: '#00796B' }}
@@ -222,11 +233,7 @@ const AddVesselJourney = () => {
 
       </Box>
 
-      <Typography variant="body1" mb={2}>
-        Total Stops: <strong>{formValues.vesselJourneyStops.length}</strong>
-      </Typography>
-
-      <Divider />
+     
 
       <Box display="flex" alignItems="center" gap={2} mt={2}>
         <FormControl fullWidth>
@@ -258,24 +265,43 @@ const AddVesselJourney = () => {
           Add Stop
         </Button>
       </Box>
+      <Typography variant="body1" mb={2}>
+        Total Stops: <strong>{formValues.vesselJourneyStops.length}</strong>
+      </Typography>
 
-      <Box mt={3}>
-        {formValues.vesselJourneyStops.map((stop, index) => (
-          <Box key={index} display="flex" alignItems="center" justifyContent="space-between" mb={1}>
-            <Typography variant="body2">
-              Stop {index + 1}: {stop.rigName}
-            </Typography>
-            <Button
+      <Divider />
+      
+      
+
+    </Container>
+    <TableContainer component={Paper} >
+    <Table sx={{ minWidth: 300}} aria-label="simple table">
+     
+      <TableBody>
+        {formValues.vesselJourneyStops?.map((stop,index) => (
+          <TableRow
+            key={index}
+            sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
+          >
+            <TableCell >
+              Stop: {index+1}
+           </TableCell>
+          
+           <TableCell> {stop.rigName}</TableCell>
+           <TableCell></TableCell>
+           <TableCell> <Button
               variant="outlined"
               color="secondary"
               onClick={() => handleRemoveStop(index)}
             >
               Remove
-            </Button>
-          </Box>
+            </Button></TableCell>
+          </TableRow>
         ))}
-      </Box>
-    </Container>
+      </TableBody>
+    </Table>
+  </TableContainer>
+  </Container>
   );
 };
 
