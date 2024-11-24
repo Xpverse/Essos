@@ -20,20 +20,19 @@ import {
   TableHead,
   TableRow,
   Paper,
-  IconButton,
 } from "@mui/material";
-import EditIcon from "@mui/icons-material/Edit";
 
 const MaterialRequest2 = () => {
-  const [statusFilter, setStatusFilter] = useState("");
-  const [currentRig, setCurrentRig] = useState({});
-  
+  const [selectedStatuses, setSelectedStatuses] = useState([]); // Multi-select status array
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
-  const materialRequests = useSelector((state) => state.materialRequestReducer.materialRequests);
+  const materialRequests = useSelector(
+    (state) => state.materialRequestReducer.materialRequests
+  );
   const rigs = useSelector((state) => state.rigReducer.rigs || []);
   const vessels = useSelector((state) => state.vesselReducer.vessels || []);
+  const [currentRig, setCurrentRig] = useState({});
 
   useEffect(() => {
     dispatch(fetchMaterialRequestData());
@@ -41,15 +40,38 @@ const MaterialRequest2 = () => {
     dispatch(fetchVesselRequestData());
   }, [dispatch]);
 
-  const handleCreateClick = () => navigate("/createMaterialRequest");
+  const handleCreateClick = () => {
+    navigate("/createMaterialRequest");
+  };
 
-  const handleNavigation = (id) => navigate(`/materialRequestSummary/${id}`);
+  const handleNavigation = (id) => {
+    navigate(`/materialRequestSummary/${id}`);
+  };
 
-  const handleUpdateNavigation = (id) => navigate(`/updateMaterialRequest/${id}`)
-  
-  const handleStatusChange = (status) => setStatusFilter(status);
+  const handleRigChange = (event) => {
+    setCurrentRig(event.target.value);
+  };
 
-  const handleRigChange = (event) => setCurrentRig(event.target.value);
+  // Multi-select status filter logic
+  const handleStatusChange = (status) => {
+    setSelectedStatuses((prev) =>
+      prev.includes(status)
+        ? prev.filter((item) => item !== status) // Remove status if already selected
+        : [...prev, status] // Add status if not selected
+    );
+  };
+
+  const clearStatusFilter = () => {
+    setSelectedStatuses([]); // Clear all selected statuses
+  };
+
+  // Filter records based on selected statuses
+  const filteredRecords =
+    selectedStatuses.length > 0
+      ? materialRequests.filter((item) =>
+          selectedStatuses.includes(item.materialRequestStatus)
+        )
+      : materialRequests;
 
   const createData = (
     requestId,
@@ -83,7 +105,7 @@ const MaterialRequest2 = () => {
     };
   };
 
-  const records = materialRequests.map((materialRequest) =>
+  const records = filteredRecords.map((materialRequest) =>
     createData(
       materialRequest.materialRequestId,
       "12/12/2024",
@@ -97,7 +119,6 @@ const MaterialRequest2 = () => {
       "sample remark",
       1,
       10,
-      materialRequest.materialRequestRemarks,
       materialRequest.materialRequestStatus
     )
   );
@@ -125,45 +146,53 @@ const MaterialRequest2 = () => {
       <Box sx={{ display: "flex", flexDirection: "column", gap: 2, mb: 2 }}>
         <FormControl fullWidth variant="outlined">
           <InputLabel sx={{ fontWeight: "bold" }}>Select Rig</InputLabel>
-          <Select label="Select Rig" onChange={handleRigChange}>
-            {rigs.map((rig) => (
-              <MenuItem key={rig.rigName} value={rig.rigName}>
-                {rig.rigName}
-              </MenuItem>
-            ))}
+          <Select label="Select Rig">
+            {rigs &&
+              rigs.map((rig) => (
+                <MenuItem value={rig.rigName}>{rig.rigName} </MenuItem>
+              ))}
           </Select>
         </FormControl>
 
         <FormControl fullWidth variant="outlined">
           <InputLabel sx={{ fontWeight: "bold" }}>Select Vessel</InputLabel>
           <Select label="Select Vessel">
-            {vessels.map((vessel) => (
-              <MenuItem key={vessel.vesselName} value={vessel.vesselName}>
-                {vessel.vesselName}
-              </MenuItem>
-            ))}
+            {vessels &&
+              vessels.map((vessel) => (
+                <MenuItem value={vessel.vesselName}>
+                  {vessel.vesselName}{" "}
+                </MenuItem>
+              ))}
           </Select>
         </FormControl>
 
         <FormControl fullWidth variant="outlined">
           <InputLabel sx={{ fontWeight: "bold" }}>Select Type</InputLabel>
           <Select label="Select Type">
-            <MenuItem value="BackLoad Request">BackLoad Request</MenuItem>
-            <MenuItem value="Transfer Request">Transfer Request</MenuItem>
-            <MenuItem value="Material Request">Material Request</MenuItem>
+            <MenuItem value={"BackLoad Request"}>BackLoad Request</MenuItem>
+            <MenuItem value={"Transfer Request"}>Transfer Request</MenuItem>
+            <MenuItem value={"Material Request"}>Material Request</MenuItem>
           </Select>
         </FormControl>
       </Box>
 
       {/* Status Filter Buttons */}
       <Box sx={{ display: "flex", gap: 2, mb: 3 }}>
-        {["Created", "Requested", "Loading requested", "Loaded", "Offloading requested"].map((status) => (
+        {[
+          "Created",
+          "Requested",
+          "Loading requested",
+          "Loaded",
+          "Offloading requested",
+        ].map((status) => (
           <Button
             key={status}
-            variant={statusFilter === status ? "contained" : "outlined"}
+            variant={selectedStatuses.includes(status) ? "contained" : "outlined"}
             onClick={() => handleStatusChange(status)}
             sx={{
-              backgroundColor: statusFilter === status ? "#ADE9EB" : "#FFFFFF",
+              backgroundColor: selectedStatuses.includes(status)
+                ? "#ADE9EB"
+                : "#FFFFFF",
               color: "#000",
               borderColor: "#ADE9EB",
               textTransform: "none",
@@ -177,28 +206,12 @@ const MaterialRequest2 = () => {
             {status}
           </Button>
         ))}
-        <Button
-          variant="outlined"
-          disabled
-          sx={{
-            textTransform: "none",
-            borderRadius: 4,
-            fontWeight: "bold",
-            color: "#A9A9A9",
-            width: 180,
-            height: 50,
-            borderColor: "#A9A9A9",
-          }}
-        >
-          Offloaded
-        </Button>
       </Box>
 
-      {/* Clear Filter Button */}
       <Box sx={{ display: "flex", justifyContent: "flex-end" }}>
         <Button
           variant="text"
-          onClick={() => handleStatusChange("")}
+          onClick={clearStatusFilter}
           sx={{
             textTransform: "none",
             color: "#008080",
@@ -233,31 +246,17 @@ const MaterialRequest2 = () => {
             {records.map((row, index) => (
               <TableRow key={index}>
                 <TableCell>{row.requestDate}</TableCell>
-                <TableCell>
-                  <Box sx={{ display: "flex", alignItems: "center" }}>
-                    <Typography
-                      variant="body2"
-                      sx={{
-                        color: "#008080",
-                        textDecoration: "underline",
-                        cursor: "pointer",
-                        mr: 1,
-                      }}
-                      onClick={() => handleNavigation(row.requestId)}
-                    >
-                      {row.requestName}
-                    </Typography>
-                    <IconButton
-                      size="small"
-                      sx={{
-                        color: "#008080",
-                        "&:hover": { backgroundColor: "rgba(0, 128, 128, 0.1)" },
-                      }}
-                      onClick={() => handleUpdateNavigation(row.requestId)}
-                    >
-                      <EditIcon fontSize="small" />
-                    </IconButton>
-                  </Box>
+                <TableCell onClick={() => handleNavigation(row.requestId)}>
+                  <Typography
+                    variant="body2"
+                    sx={{
+                      color: "#008080",
+                      textDecoration: "underline",
+                      cursor: "pointer",
+                    }}
+                  >
+                    {row.requestName}
+                  </Typography>
                 </TableCell>
                 <TableCell>{row.section}</TableCell>
                 <TableCell>{row.requiredBy}</TableCell>
@@ -268,11 +267,7 @@ const MaterialRequest2 = () => {
                 <TableCell>{row.remarks}</TableCell>
                 <TableCell>{row.numberOfLifts}</TableCell>
                 <TableCell>{row.weightInTons}</TableCell>
-                <TableCell
-                  sx={{ color: row.status === "Loaded" ? "red" : "black" }}
-                >
-                  {row.status}
-                </TableCell>
+                <TableCell>{row.status}</TableCell>
               </TableRow>
             ))}
           </TableBody>
