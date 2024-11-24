@@ -161,8 +161,7 @@ const AddVesselJourney = () => {
 
   return (
     <Container maxWidth="md" style={{ padding: '0px' }}>
-      <Box display="flex" justifyContent="space-between" mb={2}>
-        <Typography variant="h6">Add Vessel Journey</Typography>
+      <Box display="flex" flexDirection="row-reverse" justifyContent="space-between" mb={2}>
         <Button
           variant="contained"
           style={{ backgroundColor: '#00796B' }}
