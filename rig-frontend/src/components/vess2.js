@@ -1,34 +1,34 @@
-import React, { useState,useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Box, Button, Checkbox, Container, IconButton, MenuItem, Chip, Select, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Typography, Paper, Divider, Grid } from '@mui/material';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
-import BoltIcon from '@mui/icons-material/Bolt';
 import InsertDriveFileIcon from '@mui/icons-material/InsertDriveFile';
 import DownloadIcon from '@mui/icons-material/Download';
 import { useParams } from 'react-router-dom';
-import { useDispatch,useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { fetchCurrentVesselFinalAction } from '../redux/actions/vesselAction';
 import axios from 'axios';
+
 const VesselMaterialRequest = () => {
   const [selectedRows, setSelectedRows] = useState([]);
   const [vesselJourneyStops, setVesselJourneyStops] = useState(null);
   const { id } = useParams();
   const dispatch = useDispatch();
-  useEffect(() => {
-    if(id){
-      dispatch(fetchCurrentVesselFinalAction(id))
-    }
-  
-  }, [dispatch,id]);
 
-  const currentVessel = useSelector((state)=> state.vesselReducer.currentVessel)
-  
+  useEffect(() => {
+    if (id) {
+      dispatch(fetchCurrentVesselFinalAction(id));
+    }
+  }, [dispatch, id]);
+
+  const currentVessel = useSelector((state) => state.vesselReducer.currentVessel);
+
   useEffect(() => {
     if (currentVessel?.currentVesselJourney?.vesselJourneyId) {
       const vesselJourneyId = currentVessel.currentVesselJourney.vesselJourneyId;
 
-      
-      axios.get(`http://localhost:8000/api/v1/vessel-journey-stops/vessel-journey/${vesselJourneyId}`, {})
+      axios
+        .get(`http://localhost:8000/api/v1/vessel-journey-stops/vessel-journey/${vesselJourneyId}`, {})
         .then((response) => {
           console.log('Axios request successful:', response.data);
           setVesselJourneyStops(response.data);
@@ -38,20 +38,6 @@ const VesselMaterialRequest = () => {
         });
     }
   }, [currentVessel]);
-
-  
-  
-  const vessels = [
-    "Vessel Name 1 (Capacity)",
-    "Vessel Name 2 (Capacity)",
-    "Vessel Name 3 (Capacity)",
-    "Vessel Name 4 (Capacity)",
-    "Vessel Name 5 (Capacity)"
-  ];
-
-  const handleVesselChange = (event) => {
-    //setSelectedVessel(event.target.value);
-  };
 
   const rows = [
     { srNo: 1, matCode: 'H115904-37 REF', description: 'HP WELLHEAD HSG UNIT, ASSEMBLY', qty: 1, uom: 'Each', owner: 'Each', packingDetails: 'Each', dimensions: '30 x 30 x 50', weight: 'weight', remarks: 'Test1' },
@@ -89,8 +75,15 @@ const VesselMaterialRequest = () => {
 
   const isSelected = (srNo) => selectedRows.indexOf(srNo) !== -1;
 
+  const formatDateTime = (dateTimeString) => {
+    if (!dateTimeString) return '';
+    const [date, time] = dateTimeString.split('T');
+    const formattedTime = time.substring(0, 5); // Extract HH:mm
+    return `${date} ${formattedTime}`;
+  };
+
   return (
-    <Container >
+    <Container>
       {/* Navigation */}
       <Box display="flex" alignItems="center" mb={2}>
         <IconButton>
@@ -101,7 +94,6 @@ const VesselMaterialRequest = () => {
 
       {/* Material Requests, Bulk Occupied, and Details Section */}
       <Grid container spacing={4}>
-        {/* Material Requests */}
         <Grid item xs={4}>
           <Typography variant="subtitle1">1. Material Requests</Typography>
           <Paper elevation={3} style={{ padding: '16px', borderRadius: '8px' }}>
@@ -149,20 +141,24 @@ const VesselMaterialRequest = () => {
               <Box display="flex" justifyContent="space-between" width="100%" mb={2}>
                 <Typography variant="body2" style={{ fontWeight: 'bold' }}>VESSEL BERTHING TIME</Typography>
                 <Box textAlign="right">
-                  <Typography variant="body1" color="primary">{currentVessel && currentVessel.currentVesselJourney && currentVessel.currentVesselJourney.vesselJourneyBerthingOn}</Typography>
+                  <Typography variant="body1" color="primary">
+                    {currentVessel?.currentVesselJourney?.vesselJourneyBerthingOn && formatDateTime(currentVessel.currentVesselJourney.vesselJourneyBerthingOn)}
+                  </Typography>
                 </Box>
               </Box>
 
               <Box display="flex" justifyContent="space-between" width="100%" mb={2}>
                 <Typography variant="body2" style={{ fontWeight: 'bold' }}>VESSEL SAILING TIME</Typography>
                 <Box textAlign="right">
-                <Typography variant="body1" color="primary">{currentVessel && currentVessel.currentVesselJourney.vesselJourneySailingOn}</Typography>
+                  <Typography variant="body1" color="primary">
+                    {currentVessel?.currentVesselJourney?.vesselJourneySailingOn && formatDateTime(currentVessel.currentVesselJourney.vesselJourneySailingOn)}
+                  </Typography>
                 </Box>
               </Box>
 
               <Box display="flex" justifyContent="space-between" width="100%" mb={2}>
                 <Typography variant="body2" style={{ fontWeight: 'bold' }}>TOTAL WEIGHT IN TONS</Typography>
-                <Typography variant="body1" color="primary">{currentVessel && currentVessel.currentVesselJourney.vesselJourneyDeckCapacity}</Typography>
+                <Typography variant="body1" color="primary">{currentVessel?.currentVesselJourney?.vesselJourneyDeckCapacity}</Typography>
               </Box>
 
               <Box display="flex" justifyContent="space-between" width="100%">
@@ -172,46 +168,46 @@ const VesselMaterialRequest = () => {
             </Box>
           </Paper>
         </Grid>
-        {/* Shipment Tracking Section */}
-        <Grid item xs={12}>
+      </Grid>
+
+      {/* Shipment Tracking Section */}
+      <Grid item xs={12}>
         <Typography variant="h6" gutterBottom>Shipment Tracking</Typography>
         <Box display="flex" alignItems="center" justifyContent="center" mt={2}>
           {vesselJourneyStops?.map((stop, index) => (
-          <React.Fragment key={index}>
-            <Box textAlign="center">
-              <CheckCircleIcon sx={{ color: '#008080' }} fontSize="large" />
-              <Typography variant="body2" style={{ color: '#6c757d', marginTop: '4px' }}>{stop.rigName}</Typography>
-            </Box>
-          {index < vesselJourneyStops.length - 1 && (
-            <Divider flexItem orientation="horizontal" sx={{ width: '100px', height: '2px', backgroundColor: '#008080', mx: 4 }} />
-          )}
-          </React.Fragment>
-        ))}
-        </Box>
-        </Grid>
-
-        <Box mt={4} mb={2} sx={{ display: 'flex', justifyContent: 'center' }}>
-          <Divider
-            sx={{
-              width: '80%', // Adjusts the length of the line
-              borderColor: '#e0e0e0',
-              borderWidth: '1.5px',
-            }}
-          />
+            <React.Fragment key={index}>
+              <Box textAlign="center">
+                <CheckCircleIcon sx={{ color: '#008080' }} fontSize="large" />
+                <Typography variant="body2" style={{ color: '#6c757d', marginTop: '4px' }}>{stop.rigName}</Typography>
+              </Box>
+              {index < vesselJourneyStops.length - 1 && (
+                <Divider flexItem orientation="horizontal" sx={{ width: '100px', height: '2px', backgroundColor: '#008080', mx: 4 }} />
+              )}
+            </React.Fragment>
+          ))}
         </Box>
       </Grid>
-      <Box display="flex" alignItems="center" mb={1} mt={3}>
-        {/* File Icon */}
-        <InsertDriveFileIcon sx={{ color: '#008080', fontSize: '20px' }} />
 
-        {/* Text */}
+      {/* Divider Section */}
+      <Box mt={4} mb={2} sx={{ display: 'flex', justifyContent: 'center' }}>
+        <Divider
+          sx={{
+            width: '80%',
+            borderColor: '#e0e0e0',
+            borderWidth: '1.5px',
+          }}
+        />
+      </Box>
+
+      {/* Download Section */}
+      <Box display="flex" alignItems="center" mb={1} mt={3}>
+        <InsertDriveFileIcon sx={{ color: '#008080', fontSize: '20px' }} />
         <Typography variant="body1" sx={{ color: '#008080', fontWeight: 'bold', ml: 1 }}>
           Downloaded Tables
         </Typography>
-
-        {/* Download Icon */}
         <DownloadIcon sx={{ color: '#008080', ml: 1, fontSize: '20px' }} />
       </Box>
+
       {/* Required Item Details Table */}
       <Typography variant="subtitle1" style={{ marginTop: 40 }}>Required Item Details</Typography>
       <TableContainer component={Paper} style={{ marginTop: 16 }}>
