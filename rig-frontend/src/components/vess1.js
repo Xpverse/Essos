@@ -145,3 +145,4 @@ const VesselsTable = () => {
 };
 
 export default VesselsTable;
+
