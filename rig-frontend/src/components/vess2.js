@@ -9,6 +9,7 @@ import { useParams } from 'react-router-dom';
 import { useDispatch,useSelector } from 'react-redux';
 import { fetchCurrentVesselFinalAction } from '../redux/actions/vesselAction';
 import axios from 'axios';
+import { BASE_URL } from '../constants';
 import { format } from 'date-fns';
 const VesselMaterialRequest = () => {
   const [selectedRows, setSelectedRows] = useState([]);
@@ -33,7 +34,7 @@ const VesselMaterialRequest = () => {
       const vesselJourneyId = currentVessel.currentVesselJourney?.vesselJourneyId;
 
       
-      axios.get(`http://localhost:8000/api/v1/vessel-journey-stops/vessel-journey/${vesselJourneyId}`, {})
+      axios.get(`${BASE_URL}/api/v1/vessel-journey-stops/vessel-journey/${vesselJourneyId}`, {})
         .then((response) => {
           console.log('Axios request successful:', response.data);
           setVesselJourneyStops(response.data);
@@ -42,7 +43,7 @@ const VesselMaterialRequest = () => {
           console.error('Axios request failed:', error);
         });
 
-        axios.get(`http://localhost:8000/api/v1/material-requests/vessel/${vesselId}`, {})
+        axios.get(`${BASE_URL}/api/v1/material-requests/vessel/${vesselId}`, {})
         .then((response) => {
           console.log('Axios request successful:', response.data);
           setMaterialRequests(response.data);

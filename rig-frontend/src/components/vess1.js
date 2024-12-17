@@ -7,6 +7,7 @@ import StopIcon from '@mui/icons-material/Stop';
 import { useDispatch, useSelector } from 'react-redux';
 import { fetchVesselRequestData } from '../redux/actions/vesselAction';
 import { useNavigate } from 'react-router-dom';
+import { BASE_URL } from '../constants';
 import axios from 'axios';
 const VesselsTable = () => {
   const dispatch = useDispatch();
@@ -23,7 +24,7 @@ const VesselsTable = () => {
         try {
           
           const requests = vessels.map((vessel) =>
-            axios.get(`http://localhost:8000/api/v1/vessels/${parseInt(vessel.vesselId)}/journey-order`).then((response) => ({
+            axios.get(`${BASE_URL}/api/v1/vessels/${parseInt(vessel.vesselId)}/journey-order`).then((response) => ({
               vesselId: vessel.vesselId,
               data: response.data,
             }))

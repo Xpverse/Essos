@@ -1,4 +1,5 @@
 import axios from "axios"
+import { BASE_URL } from "../../constants"
 export const FETCH_DATA_REQUEST_VESSEL = "FETCH_DATA_REQUEST_VESSEL"
 
 export const FETCH_DATA_SUCCESS_VESSEL = "FETCH_DATA_SUCCESS_VESSEL"
@@ -45,7 +46,7 @@ export const fetchVesselRequestData = () => {
     return (dispatch) => {
         dispatch(fetchVesselDataRequest())
         console.log("Checkpoint 1")
-        axios.get("http://localhost:8000/api/v1/vessels")
+        axios.get(`${BASE_URL}/api/v1/vessels`)
             .then(response => {
                 const data = response.data
                 console.log(data)
@@ -62,7 +63,7 @@ export const fetchCurrentVesselFinalAction = (id) => {
     return (dispatch) => {
         dispatch(fetchCurrentVessel())
         console.log("Checkpoint 1")
-        axios.get(`http://localhost:8000/api/v1/vessels/${id}`)
+        axios.get(`${BASE_URL}/api/v1/vessels/${id}`)
             .then(response => {
                 const data = response.data
                 console.log("Current vessel Data***",data)

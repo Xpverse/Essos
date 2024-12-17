@@ -1,4 +1,5 @@
 import axios from "axios"
+import { BASE_URL } from "../../constants"
 export const FETCH_DATA_REQUEST_RIG_WELL_MAP = "FETCH_DATA_REQUEST_RIG_WELL_MAP"
 
 export const FETCH_DATA_SUCCESS_RIG_WELL_MAP = "FETCH_DATA_SUCCESS_RIG_WELL_MAP"
@@ -25,7 +26,7 @@ export const fetchRigWellMapRequestData = () =>  {
     return (dispatch) => {
         dispatch(fetchRigWellMapDataRequest())
         console.log("Checkpoint Rig Well Map")
-        axios.get("http://localhost:8000/api/v1/rigwellmaps")
+        axios.get(`${BASE_URL}/api/v1/rigwellmaps`)
             .then(response => {
                 const data = response.data
                 console.log("******RIG WELL MAP DATA*****")

@@ -1,4 +1,5 @@
 import axios from "axios"
+import { BASE_URL } from "../../constants"
 export const FETCH_DATA_REQUEST_RIG = "FETCH_DATA_REQUEST_RIG"
 
 export const FETCH_DATA_SUCCESS_RIG = "FETCH_DATA_SUCCESS_RIG"
@@ -25,7 +26,7 @@ export const fetchRigRequestData = () =>  {
     return (dispatch) => {
         dispatch(fetchRigDataRequest())
         console.log("Checkpoint 1")
-        axios.get("http://localhost:8000/api/v1/rigs")
+        axios.get(`${BASE_URL}/api/v1/rigs`)
             .then(response => {
                 const data = response.data
                 console.log(data)

@@ -1,4 +1,5 @@
 import axios from "axios"
+import { BASE_URL } from "../../constants"
 export const FETCH_DATA_REQUEST_WELL = "FETCH_DATA_REQUEST_WELL"
 
 export const FETCH_DATA_SUCCESS_WELL = "FETCH_DATA_SUCCESS_WELL"
@@ -25,7 +26,7 @@ export const fetchWellRequestData = () => {
     return (dispatch) => {
         dispatch(fetchWellDataRequest())
         console.log("Checkpoint 1")
-        axios.get("http://localhost:8000/api/v1/wells")
+        axios.get(`${BASE_URL}/api/v1/wells`)
             .then(response => {
                 const data = response.data
                 console.log(data)

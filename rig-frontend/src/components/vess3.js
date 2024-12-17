@@ -15,6 +15,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { fetchCurrentVesselFinalAction } from '../redux/actions/vesselAction';
 import { fetchRigRequestData } from '../redux/actions/rigAction';
 import { useNavigate, useParams } from 'react-router-dom';
+import { BASE_URL } from '../constants';
 import axios from 'axios';
 
 const AddVesselJourney = () => {
@@ -39,7 +40,7 @@ const AddVesselJourney = () => {
   useEffect(() => {
     if (id) {
       axios
-        .get(`http://localhost:8000/api/v1/vessel-journeys/${id}`)
+        .get(`${BASE_URL}/api/v1/vessel-journeys/${id}`)
         .then((response) => {
           const data = response.data;
 
@@ -72,7 +73,7 @@ const AddVesselJourney = () => {
       const vesselJourneyId = currentVessel.currentVesselJourney.vesselJourneyId;
 
       axios
-        .get(`http://localhost:8000/api/v1/vessel-journey-stops/vessel-journey/${vesselJourneyId}`)
+        .get(`${BASE_URL}/api/v1/vessel-journey-stops/vessel-journey/${vesselJourneyId}`)
         .then((response) => {
           console.log('Axios request successful:', response.data);
           setVesselJourneyStops(response.data);
@@ -101,12 +102,12 @@ const AddVesselJourney = () => {
     console.log(requestBody);
 
     axios
-      .delete(`http://localhost:8000/api/v1/vessel-journey-stops/vessel-journey/${id}`)
+      .delete(`${BASE_URL}/api/v1/vessel-journey-stops/vessel-journey/${id}`)
       .then((response) => {
         console.log('Delete request successful:', response.data);
 
         axios
-          .post(`http://localhost:8000/api/v1/vessel-journey-stops/batch`, JSON.stringify(requestBody), {
+          .post(`${BASE_URL}/api/v1/vessel-journey-stops/batch`, JSON.stringify(requestBody), {
             headers: {
               'Content-Type': 'application/json',
             },

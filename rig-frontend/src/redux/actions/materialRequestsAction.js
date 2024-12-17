@@ -1,5 +1,5 @@
 import axios from "axios"
-
+import { BASE_URL } from "../../constants"
 export const FETCH_DATA_REQUEST_MATERIALREQUEST = "FETCH_DATA_REQUEST_MATERIALREQUEST"
 
 export const FETCH_DATA_SUCCESS_MATERIALREQUEST = "FETCH_DATA_SUCCESS_MATERIALREQUEST"
@@ -105,7 +105,7 @@ export const fetchMaterialRequestData = () => {
     return (dispatch) => {
         dispatch(fetchMaterialRequestDataRequest())
         console.log("Checkpoint 1")
-        axios.get("http://localhost:8000/api/v1/material-requests")
+        axios.get(`${BASE_URL}/api/v1/material-requests`)
             .then(response => {
                 const data = response.data
                 console.log(data)
@@ -122,7 +122,7 @@ export const fetchCurrentMaterialRequestFinalAction = (id) => {
     return (dispatch) => {
         dispatch(fetchCurrentMaterialRequest())
         console.log("Checkpoint 1")
-        axios.get(`http://localhost:8000/api/v1/material-requests/${id}`)
+        axios.get(`${BASE_URL}/api/v1/material-requests/${id}`)
             .then(response => {
                 const data = response.data
                 console.log(data)
@@ -141,7 +141,7 @@ export const fetchCurrentMaterialRequestItemsFinalAction = (id) => {
     return (dispatch) => {
         dispatch(fetchCurrentMaterialRequestItems())
         console.log("Checkpoint 1")
-        axios.get(`http://localhost:8000/api/v1/material-request-items/forMaterialRequest/${id}`)
+        axios.get(`${BASE_URL}/api/v1/material-request-items/forMaterialRequest/${id}`)
             .then(response => {
                 const data = response.data
                 console.log(data)
@@ -165,7 +165,7 @@ export const bulkUploadMaterialRequestItemsFinalAction = (file,materialRequestId
         const formData = new FormData();
         formData.append('file', file);
 
-        axios.post(`http://localhost:8000/api/v1/material-request-items/upload?materialRequestId=${materialRequestId}`,formData,{
+        axios.post(`${BASE_URL}/api/v1/material-request-items/upload?materialRequestId=${materialRequestId}`,formData,{
             headers: {
                 'Content-Type': 'multipart/form-data',
               }
@@ -204,7 +204,7 @@ export const postMaterialRequestFinalAction = (materialRequest,file) => {
             materialRequestFromLocationType: "RIG",  
             materialRequestActive: true
         }
-        axios.post(`http://localhost:8000/api/v1/material-requests`,JSON.stringify(createBody),{
+        axios.post(`${BASE_URL}/api/v1/material-requests`,JSON.stringify(createBody),{
             headers: {
               'Content-Type': 'application/json',
             }

@@ -4,6 +4,7 @@ import { createTheme, ThemeProvider } from '@mui/material/styles';
 import { useDispatch } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
+import { BASE_URL } from '../constants';
 const theme = createTheme({
   palette: {
     primary: {
@@ -17,7 +18,6 @@ const LoginPage = () => {
   const navigate = useNavigate()
   const emailRef = useRef();
   const passwordRef = useRef();
-
   const handleLogin = async (event) => {
     event.preventDefault();
 
@@ -28,7 +28,7 @@ const LoginPage = () => {
 
     try {
       const response = await axios.post(
-        "http://localhost:8000/api/v1/login",
+        `${BASE_URL}/api/v1/login`,
         JSON.stringify(loginBody),
         {
           headers: { 'Content-Type': 'application/json' },

@@ -1,4 +1,5 @@
 import axios from "axios"
+import { BASE_URL } from "../../constants"
 export const FETCH_DATA_REQUEST_VESSELJOURNEY = "FETCH_DATA_REQUEST_VESSELJOURNEY"
 
 export const FETCH_DATA_SUCCESS_VESSELJOURNEY = "FETCH_DATA_SUCCESS_VESSELJOURNEY"
@@ -45,7 +46,7 @@ export const fetchVesselJourneyRequestData = () => {
     return (dispatch) => {
         dispatch(fetchVesselJourneyDataRequest())
         console.log("Checkpoint 1")
-        axios.get("http://localhost:8000/api/v1/vessel-journeys")
+        axios.get(`${BASE_URL}/api/v1/vessel-journeys`)
             .then(response => {
                 const data = response.data
                 console.log(data)
@@ -65,7 +66,7 @@ export const postVesselJourneyFinalAction = (body) => {
             
         }
         
-        axios.post(`http://localhost:8000/api/v1/vessel-journeys`,JSON.stringify(createBody),{
+        axios.post(`${BASE_URL}/api/v1/vessel-journeys`,JSON.stringify(createBody),{
             headers: {
               'Content-Type': 'application/json',
             }
