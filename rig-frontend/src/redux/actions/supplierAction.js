@@ -26,7 +26,11 @@ export const fetchSupplierRequestData = () => {
     return (dispatch) => {
         dispatch(fetchSupplierDataRequest())
         console.log("Checkpoint 1")
-        axios.get(`${BASE_URL}/api/v1/suppliers`)
+        axios.get(`${BASE_URL}/api/v1/suppliers`,{
+            headers: {
+              'Authorization': `Bearer ${sessionStorage.getItem('accessToken')}`
+            }
+          })
             .then(response => {
                 const data = response.data
                 console.log(data)

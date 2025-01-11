@@ -41,6 +41,7 @@ function AppLayout() {
     
     sessionStorage.removeItem('accessToken');
     sessionStorage.removeItem('email');
+    sessionStorage.removeItem('role');
     navigate("/login"); 
   };
 
@@ -66,9 +67,6 @@ function AppLayout() {
             </Menu>
           </>
         )}
-          <Typography variant="body1" noWrap onClick={()=>navigate("/login")}>
-           <Button><strong>log in</strong></Button>
-          </Typography>
         </Toolbar>
       </AppBar>
 

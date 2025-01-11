@@ -46,7 +46,11 @@ export const fetchVesselJourneyRequestData = () => {
     return (dispatch) => {
         dispatch(fetchVesselJourneyDataRequest())
         console.log("Checkpoint 1")
-        axios.get(`${BASE_URL}/api/v1/vessel-journeys`)
+        axios.get(`${BASE_URL}/api/v1/vessel-journeys`,{
+            headers: {
+              'Authorization': `Bearer ${sessionStorage.getItem('accessToken')}`
+            }
+          })
             .then(response => {
                 const data = response.data
                 console.log(data)
@@ -69,6 +73,7 @@ export const postVesselJourneyFinalAction = (body) => {
         axios.post(`${BASE_URL}/api/v1/vessel-journeys`,JSON.stringify(createBody),{
             headers: {
               'Content-Type': 'application/json',
+              'Authorization': `Bearer ${sessionStorage.getItem('accessToken')}`
             }
           })
             .then(response => {

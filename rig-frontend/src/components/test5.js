@@ -5,6 +5,7 @@ import { useDispatch } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { BASE_URL } from '../constants';
+import {jwtDecode} from 'jwt-decode';
 const theme = createTheme({
   palette: {
     primary: {
@@ -21,15 +22,14 @@ const LoginPage = () => {
   const handleLogin = async (event) => {
     event.preventDefault();
 
-    const loginBody = {
+    const loginParams = {
       email: emailRef.current.value,
       password: passwordRef.current.value,
     };
 
     try {
       const response = await axios.post(
-        `${BASE_URL}/api/v1/login`,
-        JSON.stringify(loginBody),
+        `${BASE_URL}/api/auth/login?userEmail=${loginParams.email}&userPassword=${loginParams.password}`,
         {
           headers: { 'Content-Type': 'application/json' },
           withCredentials: true,
@@ -40,7 +40,10 @@ const LoginPage = () => {
       console.log("AccessToken", accessToken);
       
       sessionStorage.setItem("accessToken",accessToken)
-      sessionStorage.setItem("email",loginBody.email)
+      sessionStorage.setItem("email",loginParams.email)
+      const decodedToken = jwtDecode(accessToken);
+      console.log("*************DECODEEEEEEEE*********",decodedToken)
+      sessionStorage.setItem("role",decodedToken.role)
       navigate('/')
       // dispatch(loginRequestFinalAction(loginBody));
       alert('Login clicked!');

@@ -46,7 +46,11 @@ export const fetchVesselRequestData = () => {
     return (dispatch) => {
         dispatch(fetchVesselDataRequest())
         console.log("Checkpoint 1")
-        axios.get(`${BASE_URL}/api/v1/vessels`)
+        axios.get(`${BASE_URL}/api/v1/vessels`,{
+            headers: {
+              'Authorization': `Bearer ${sessionStorage.getItem('accessToken')}`
+            }
+          })
             .then(response => {
                 const data = response.data
                 console.log(data)
@@ -63,7 +67,11 @@ export const fetchCurrentVesselFinalAction = (id) => {
     return (dispatch) => {
         dispatch(fetchCurrentVessel())
         console.log("Checkpoint 1")
-        axios.get(`${BASE_URL}/api/v1/vessels/${id}`)
+        axios.get(`${BASE_URL}/api/v1/vessels/${id}`,{
+            headers: {
+              'Authorization': `Bearer ${sessionStorage.getItem('accessToken')}`
+            }
+          })
             .then(response => {
                 const data = response.data
                 console.log("Current vessel Data***",data)

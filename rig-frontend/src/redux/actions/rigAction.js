@@ -26,7 +26,11 @@ export const fetchRigRequestData = () =>  {
     return (dispatch) => {
         dispatch(fetchRigDataRequest())
         console.log("Checkpoint 1")
-        axios.get(`${BASE_URL}/api/v1/rigs`)
+        axios.get(`${BASE_URL}/api/v1/rigs`,{
+            headers: {
+              'Authorization': `Bearer ${sessionStorage.getItem('accessToken')}`
+            }
+          })
             .then(response => {
                 const data = response.data
                 console.log(data)

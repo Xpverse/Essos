@@ -26,7 +26,11 @@ export const fetchRigWellMapRequestData = () =>  {
     return (dispatch) => {
         dispatch(fetchRigWellMapDataRequest())
         console.log("Checkpoint Rig Well Map")
-        axios.get(`${BASE_URL}/api/v1/rigwellmaps`)
+        axios.get(`${BASE_URL}/api/v1/rigwellmaps`,{
+            headers: {
+              'Authorization': `Bearer ${sessionStorage.getItem('accessToken')}`
+            }
+          })
             .then(response => {
                 const data = response.data
                 console.log("******RIG WELL MAP DATA*****")

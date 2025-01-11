@@ -26,7 +26,12 @@ export const fetchWellRequestData = () => {
     return (dispatch) => {
         dispatch(fetchWellDataRequest())
         console.log("Checkpoint 1")
-        axios.get(`${BASE_URL}/api/v1/wells`)
+        axios.get(`${BASE_URL}/api/v1/wells`,{
+            headers: {
+              'Content-Type': 'application/json',
+              'Authorization': `Bearer ${sessionStorage.getItem('accessToken')}`
+            }
+          })
             .then(response => {
                 const data = response.data
                 console.log(data)
