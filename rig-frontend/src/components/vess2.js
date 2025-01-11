@@ -5,7 +5,7 @@ import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import BoltIcon from '@mui/icons-material/Bolt';
 import InsertDriveFileIcon from '@mui/icons-material/InsertDriveFile';
 import DownloadIcon from '@mui/icons-material/Download';
-import { useParams } from 'react-router-dom';
+import { useParams ,useNavigate} from 'react-router-dom';
 import { useDispatch,useSelector } from 'react-redux';
 import { fetchCurrentVesselFinalAction } from '../redux/actions/vesselAction';
 import axios from 'axios';
@@ -17,6 +17,7 @@ const VesselMaterialRequest = () => {
   const [materialRequests,setMaterialRequests]=useState([])
   const { id } = useParams();
   const dispatch = useDispatch();
+  const navigate = useNavigate();
   useEffect(() => {
     if(id){
       dispatch(fetchCurrentVesselFinalAction(id))
@@ -34,7 +35,11 @@ const VesselMaterialRequest = () => {
       const vesselJourneyId = currentVessel.currentVesselJourney?.vesselJourneyId;
 
       
-      axios.get(`${BASE_URL}/api/v1/vessel-journey-stops/vessel-journey/${vesselJourneyId}`, {})
+      axios.get(`${BASE_URL}/api/v1/vessel-journey-stops/vessel-journey/${vesselJourneyId}`,{
+        headers: {
+          'Authorization': `Bearer ${sessionStorage.getItem('accessToken')}`
+        }
+      })
         .then((response) => {
           console.log('Axios request successful:', response.data);
           setVesselJourneyStops(response.data);
@@ -43,7 +48,11 @@ const VesselMaterialRequest = () => {
           console.error('Axios request failed:', error);
         });
 
-        axios.get(`${BASE_URL}/api/v1/material-requests/vessel/${vesselId}`, {})
+        axios.get(`${BASE_URL}/api/v1/material-requests/vessel/${vesselId}`,{
+          headers: {
+            'Authorization': `Bearer ${sessionStorage.getItem('accessToken')}`
+          }
+        })
         .then((response) => {
           console.log('Axios request successful:', response.data);
           setMaterialRequests(response.data);
@@ -114,10 +123,9 @@ const VesselMaterialRequest = () => {
     <Container >
       {/* Navigation */}
       <Box display="flex" alignItems="center" mb={2}>
-        <IconButton>
+        <IconButton  onClick={() => navigate(-1)}>
           <ArrowBackIcon />
         </IconButton>
-        <Typography variant="h6" style={{ marginLeft: 8 }}>Material Requests</Typography>
       </Box>
 
       {/* Material Requests, Bulk Occupied, and Details Section */}

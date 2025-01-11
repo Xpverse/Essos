@@ -1,19 +1,51 @@
-import React,{useEffect} from 'react';
-import { useParams } from 'react-router-dom';
+import React,{useEffect,useState} from 'react';
+import { useParams ,useNavigate} from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
-import { Container, Typography, Box, Grid, Button, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Checkbox } from '@mui/material';
+import { Container, Typography, Box, Grid, Button, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Checkbox ,IconButton,Select,MenuItem,TextField} from '@mui/material';
 import { Send } from '@mui/icons-material';
 import { fetchCurrentMaterialRequestFinalAction } from '../redux/actions/materialRequestsAction';
+import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 
 function MaterialRequestSummary() {
   const { id } = useParams();
   const dispatch = useDispatch();
+  const navigate = useNavigate()
+  const [selectedVessel, setSelectedVessel] = useState();
   useEffect(() => {
     
     dispatch(fetchCurrentMaterialRequestFinalAction(id))
   },[dispatch,id])
   const currentRequest = useSelector((state)=> state.materialRequestReducer.currentMaterialRequest)
   const currentRequestItems =  useSelector((state)=> state.materialRequestReducer.currentMaterialRequestItems)
+  const vessels = useSelector((state) => state.vesselReducer.vessels || []);
+
+  const handleSelectedVesselChange = (event) => {
+    //setSelectedVessel(event.target.value); 
+    const requiredVessel = vessels.find(vessel => vessel.vesselName==event.target.value)
+    setSelectedVessel(requiredVessel)
+  };
+
+  const handleAssignVessel = async() => {
+    try{
+      const response = await axios.post(
+        `${BASE_URL}/api/v1/vessel-assignment/assign`,
+        {
+          materialRequestId: currentRequest.materialRequestId,
+          vesselId: selectedVessel.vesselId,
+          rigId: selectedRigId
+          
+        },
+        {
+          headers: {
+              Authorization: `Bearer ${sessionStorage.getItem('accessToken')}`
+            }
+        }
+      );
+    }catch(error){
+
+    }
+  };
+  
   const materialRequestData = {
     requestName: "Well-1 Drilling 36\"",
     phase: "Drilling 36\" hole",
@@ -34,7 +66,44 @@ function MaterialRequestSummary() {
 
   return (
     <Container maxWidth="lg" sx={{ paddingTop: 4 }}>
-     
+      <Box display="flex" alignItems="center" justifyContent="space-between" mb={2}>
+  <IconButton onClick={() => navigate(-1)} sx={{ marginRight: 2 }}>
+    <ArrowBackIcon />
+  </IconButton>
+
+  <Box display="flex" alignItems="center" justifyContent="flex-end" ml="auto">
+    <Select
+      label="Vessel"
+      name="selectedVessel"
+      value={selectedVessel ? selectedVessel.vesselName : ''}
+      onChange={handleSelectedVesselChange}
+      sx={{ minWidth: 200 }}
+    >
+      {vessels && vessels.map((vessel, index) => (
+                  <MenuItem key={index} value={vessel.vesselName}>
+                    {vessel.vesselName}
+                  </MenuItem>
+                ))}
+    </Select>
+
+    <Button
+      variant="contained"
+      color="primary"
+      type="submit"
+      onClick={handleAssignVessel}
+      sx={{
+        borderRadius: '24px',
+        padding: '12px 28px',
+        backgroundColor: '#00796B',
+        fontSize: '16px',
+        marginLeft: 2,
+      }}
+    >
+      Assign Vessel
+    </Button>
+  </Box>
+</Box>
+
       
       <Paper
         elevation={4}

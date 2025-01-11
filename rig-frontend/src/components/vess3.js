@@ -40,7 +40,11 @@ const AddVesselJourney = () => {
   useEffect(() => {
     if (id) {
       axios
-        .get(`${BASE_URL}/api/v1/vessel-journeys/${id}`)
+        .get(`${BASE_URL}/api/v1/vessel-journeys/${id}`,{
+          headers: {
+            'Authorization': `Bearer ${sessionStorage.getItem('accessToken')}`
+          }
+        })
         .then((response) => {
           const data = response.data;
 
@@ -73,7 +77,11 @@ const AddVesselJourney = () => {
       const vesselJourneyId = currentVessel.currentVesselJourney.vesselJourneyId;
 
       axios
-        .get(`${BASE_URL}/api/v1/vessel-journey-stops/vessel-journey/${vesselJourneyId}`)
+        .get(`${BASE_URL}/api/v1/vessel-journey-stops/vessel-journey/${vesselJourneyId}`,{
+          headers: {
+            'Authorization': `Bearer ${sessionStorage.getItem('accessToken')}`
+          }
+        })
         .then((response) => {
           console.log('Axios request successful:', response.data);
           setVesselJourneyStops(response.data);
@@ -102,25 +110,35 @@ const AddVesselJourney = () => {
     console.log(requestBody);
 
     axios
-      .delete(`${BASE_URL}/api/v1/vessel-journey-stops/vessel-journey/${id}`)
+      .delete(`${BASE_URL}/api/v1/vessel-journey-stops/vessel-journey/${id}`,{
+        headers: {
+          'Authorization': `Bearer ${sessionStorage.getItem('accessToken')}`
+        }
+      })
       .then((response) => {
         console.log('Delete request successful:', response.data);
 
         axios
-          .post(`${BASE_URL}/api/v1/vessel-journey-stops/batch`, JSON.stringify(requestBody), {
-            headers: {
-              'Content-Type': 'application/json',
-            },
-          })
-          .then((response2) => {
-            console.log('Bulk post request successful:', response2.data);
-            alert('Both requests completed successfully!');
-            navigate('/vessels');
-          })
-          .catch((error2) => {
-            console.error('Error in bulk post request:', error2);
-            alert('Error occurred in the second request.');
-          });
+  .post(
+    `${BASE_URL}/api/v1/vessel-journey-stops/batch`,
+    JSON.stringify(requestBody), 
+    {
+      headers: {
+        'Content-Type': 'application/json', 
+        'Authorization': `Bearer ${sessionStorage.getItem('accessToken')}` 
+      }
+    }
+  )
+  .then((response2) => {
+    console.log('Bulk post request successful:', response2.data);
+    alert('Both requests completed successfully!');
+    navigate('/vessels');
+  })
+  .catch((error2) => {
+    console.error('Error in bulk post request:', error2);
+    alert('Error occurred in the second request.');
+  });
+
       })
       .catch((error) => {
         console.error('Error in delete request:', error);

@@ -19,9 +19,9 @@ import VesselsTable from './components/vess1';
 import VesselMaterialRequest from './components/vess2';
 import UpdateMaterialRequestForm from './components/test7';
 import AddVesselJourney from './components/vess3';
-
-
-
+import { SnackbarProvider, useSnackbar } from 'notistack';
+import { ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 const drawerWidth = 50;
 
 function AppLayout() {
@@ -131,9 +131,12 @@ function AppLayout() {
 
 function App() {
   return (
+    <SnackbarProvider maxSnack={3}>
     <BrowserRouter>
+    
       <Content />
     </BrowserRouter>
+    </SnackbarProvider>
   );
 }
 

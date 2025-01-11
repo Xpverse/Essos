@@ -24,7 +24,12 @@ const VesselsTable = () => {
         try {
           
           const requests = vessels.map((vessel) =>
-            axios.get(`${BASE_URL}/api/v1/vessels/${parseInt(vessel.vesselId)}/journey-order`).then((response) => ({
+            axios.get(`${BASE_URL}/api/v1/vessels/${parseInt(vessel.vesselId)}/journey-order`,{
+              headers: {
+                'Authorization': `Bearer ${sessionStorage.getItem('accessToken')}`
+              }
+            }
+        ).then((response) => ({
               vesselId: vessel.vesselId,
               data: response.data,
             }))
