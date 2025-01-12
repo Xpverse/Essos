@@ -4,6 +4,10 @@ import { fetchMaterialRequestData } from "../redux/actions/materialRequestsActio
 import { fetchRigRequestData } from "../redux/actions/rigAction";
 import { fetchVesselRequestData } from "../redux/actions/vesselAction";
 import { useNavigate } from "react-router-dom";
+import axios from "axios";
+import { BASE_URL } from "../constants";
+import { ToastContainer, toast } from 'react-toastify'; // Import ToastContainer and toast
+import 'react-toastify/dist/ReactToastify.css';
 import {
   Box,
   Button,
@@ -19,14 +23,13 @@ import {
   TableContainer,
   TableHead,
   TableRow,
-  Paper,
+  Paper
 } from "@mui/material";
 
 const MaterialRequest2 = () => {
   const [selectedStatuses, setSelectedStatuses] = useState([]); // Multi-select status array
   const dispatch = useDispatch();
   const navigate = useNavigate();
-
   const materialRequests = useSelector(
     (state) => state.materialRequestReducer.materialRequests
   );
@@ -34,6 +37,9 @@ const MaterialRequest2 = () => {
   const vessels = useSelector((state) => state.vesselReducer.vessels || []);
   const [currentRig, setCurrentRig] = useState({});
 
+  const [snackbarOpen, setSnackbarOpen] = useState(false);
+  const [snackbarMessage, setSnackbarMessage] = useState('');
+  const [snackbarSeverity, setSnackbarSeverity] = useState('success'); 
   useEffect(() => {
     dispatch(fetchMaterialRequestData());
     dispatch(fetchRigRequestData());
@@ -72,15 +78,40 @@ const MaterialRequest2 = () => {
           selectedStatuses.includes(item.materialRequestStatus)
         )
       : materialRequests;
+  
+  const statusMap = {
+    "REQUEST_CREATED":"CREATED",
+    "REQUEST_LOADING":"LOADING",
+    "REQUEST_OFFLOADING":"OFFLOADING",
+    "REQUEST_LOADED":"LOADED",
+    "REQUEST_OFFLOADED":"OFFLOADED"
+  }
 
+  const statusReverseMap = {
+      "CREATED": "REQUEST_CREATED",
+      "LOADING": "REQUEST_LOADING",
+      "OFFLOADING": "REQUEST_OFFLOADING",
+      "LOADED": "REQUEST_LOADED",
+      "OFFLOADED": "REQUEST_OFFLOADED"
+  }
+  
+
+  const statusActionMap = {
+    "REQUEST_CREATED":"LOADING",
+    "REQUEST_LOADING":"OFFLOADING",
+    "REQUEST_OFFLOADING":"LOADED",
+    "REQUEST_LOADED":"OFFLOADED",
+    "REQUEST_OFFLOADED":""
+  }
+  const handleSnackbarClose = () => {
+    setSnackbarOpen(false);
+  };
   const createData = (
     requestId,
     requestDate,
     requestName,
     section,
     requiredBy,
-    requestFromLocation,
-    requestToLocation,
     vessel,
     supplier,
     remarks,
@@ -94,8 +125,6 @@ const MaterialRequest2 = () => {
       requestName,
       section,
       requiredBy,
-      requestFromLocation,
-      requestToLocation,
       vessel,
       supplier,
       remarks,
@@ -112,8 +141,6 @@ const MaterialRequest2 = () => {
       materialRequest.materialRequestName,
       "Section-1",
       materialRequest.materialRequestRequiredBy,
-      materialRequest.materialRequestFromLocation.locationName,
-      materialRequest.materialRequestToLocation.locationName,
       materialRequest.materialRequestVessel.vesselName,
       materialRequest.materialRequestSupplier.supplierName,
       "sample remark",
@@ -122,7 +149,101 @@ const MaterialRequest2 = () => {
       materialRequest.materialRequestStatus
     )
   );
+  const handleStatusAction = (action, requestId) => {
+    handleStatusActionFunction(
+      action,
+      requestId,
+      setSnackbarSeverity,
+      setSnackbarMessage,
+      setSnackbarOpen,
+      dispatch,
+    );
+  };
+  
+  const handleStatusActionFunction = async (action, requestId , setSnackbarSeverity,
+    setSnackbarMessage,
+    setSnackbarOpen,
+    dispatch) => {
+    const actionPayload = statusReverseMap[action];
+  
+    const role = sessionStorage.getItem("role");
+    let requiredRole = "";
+    if (role) {
+      const roleString = String(role);
+      requiredRole = roleString.substring(5);
+      console.log("REQUIRED ROLE****:", requiredRole);
+      console.log("sessionStorage ROLE****:", role);
+  
+    } else {
+      console.log("Role is not present in sessionStorage");
+      return; // Or handle the lack of a role appropriately
+    }
+  
+    const accessToken = sessionStorage.getItem('accessToken');
+  
+    console.log("Access Token:", accessToken);
+    console.log("API URL: ",`${BASE_URL}/api/v1/role-actions/${requestId}/update-status?role=${requiredRole}&newStatus=${actionPayload}`);
+  
+  
+    try {
+        const response = await axios.put(
+          `${BASE_URL}/api/v1/role-actions/${requestId}/update-status?role=${requiredRole}&newStatus=${actionPayload}`,
+          {},
+          {
+            headers: {
+              Authorization: `Bearer ${accessToken}`,
+            },
+          }
+        );
+  
+  
+        if (response.status === 200) {
+          dispatch(fetchMaterialRequestData());
+          window.alert(`Status updated to ${action} successfully!`);
+          setSnackbarSeverity("success");
+          setSnackbarMessage(`Status updated to ${action} successfully!`);
+          setSnackbarOpen(true);
+        } else if (response.status === 400) {
+          window.alert("Action not allowed for role. Please try again.");
+          setSnackbarSeverity("error");
+          setSnackbarMessage("Action not allowed for role. Please try again.");
+          setSnackbarOpen(true);
+        }
+        else if (response.status===403){
+          window.alert("You are not authorized to perform this action.");
+          setSnackbarSeverity("error");
+          setSnackbarMessage("You are not authorized to perform this action.");
+          setSnackbarOpen(true);
+        }
+        else{
+          window.alert("Error while updating the status. Please try again.");
+          console.log("Unexpected Status Code: ", response.status)
+          setSnackbarSeverity("error");
+          setSnackbarMessage("Error while updating the status. Please try again.");
+          setSnackbarOpen(true);
+  
+        }
+    } catch(error){
 
+      console.error("Error during API call:", error)
+      
+
+      if (error.response && error.response.status === 400) {
+        window.alert("Action not allowed for role. Please try again.");
+        setSnackbarSeverity("error");
+        setSnackbarMessage("Action not allowed for role. Please try again.");
+        setSnackbarOpen(true);
+
+     } else {
+      window.alert("Error while updating the status. Please try again.");
+        setSnackbarSeverity("error");
+        setSnackbarMessage("Error while updating the status. Please try again.");
+       setSnackbarOpen(true);
+   }
+    }
+  
+  };
+  
   return (
     <Container>
       {/* Create Material Request Button */}
@@ -232,14 +353,13 @@ const MaterialRequest2 = () => {
               <TableCell>Request Number</TableCell>
               <TableCell>Section</TableCell>
               <TableCell>Required by</TableCell>
-              <TableCell>From</TableCell>
-              <TableCell>To</TableCell>
               <TableCell>Vessel</TableCell>
               <TableCell>Supplier</TableCell>
               <TableCell>Remarks</TableCell>
               <TableCell>Number of Lifts</TableCell>
               <TableCell>Weight In Tons</TableCell>
               <TableCell>Current Status</TableCell>
+              <TableCell>Action</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
@@ -260,14 +380,28 @@ const MaterialRequest2 = () => {
                 </TableCell>
                 <TableCell>{row.section}</TableCell>
                 <TableCell>{row.requiredBy}</TableCell>
-                <TableCell>{row.requestFromLocation}</TableCell>
-                <TableCell>{row.requestToLocation}</TableCell>
                 <TableCell>{row.vessel}</TableCell>
                 <TableCell>{row.supplier}</TableCell>
                 <TableCell>{row.remarks}</TableCell>
                 <TableCell>{row.numberOfLifts}</TableCell>
                 <TableCell>{row.weightInTons}</TableCell>
-                <TableCell>{row.status}</TableCell>
+                <TableCell>{statusMap[row.status]}</TableCell>
+                <TableCell>
+                <Button
+                  variant="contained"
+                  color="primary"
+                  type="submit"
+                  onClick={() => handleStatusAction(statusActionMap[row.status],row.requestId)}
+                  sx={{
+                    padding: '12px 28px',
+                    backgroundColor: '#00796B',
+                    fontSize: '10px',
+                    marginLeft: 2,
+                  }}
+                >
+                  {statusActionMap[row.status]}
+                </Button>
+                </TableCell>
               </TableRow>
             ))}
           </TableBody>
