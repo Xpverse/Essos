@@ -25,9 +25,10 @@ function MaterialRequestSummary() {
     setSelectedVessel(requiredVessel)
   };
 
-  const handleAssignVessel = async() => {
+  const handleAssignVessel = () => {
+    console.log("****BUTTON CLICKED****")
     try{
-      const response = await axios.post(
+      const response = axios.post(
         `${BASE_URL}/api/v1/vessel-assignment/assign`,
         {
           materialRequestId: currentRequest.materialRequestId,
